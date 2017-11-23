@@ -3,6 +3,7 @@ package com.sub6resources.utilities
 import android.app.Activity
 import android.app.Dialog
 import android.app.NotificationManager
+import android.arch.lifecycle.ViewModel
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import com.afollestad.materialdialogs.MaterialDialog
+import org.koin.standalone.StandAloneContext
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -259,3 +261,5 @@ private class ViewLazy<in T, out V>(private val initializer: (T, KProperty<*>) -
         return value as V
     }
 }
+
+inline fun <reified T> ViewModel.inject(name: String = "") = lazy { StandAloneContext.koinContext.get<T>(name) }

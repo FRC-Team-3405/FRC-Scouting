@@ -1,4 +1,4 @@
-package com.sub6resources.frcscouting.database.Models
+package com.sub6resources.frcscouting.database.models
 
 import android.arch.persistence.room.*
 
