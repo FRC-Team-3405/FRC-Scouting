@@ -1,9 +1,10 @@
-package com.sub6resources.frcscouting.database.models
+package com.sub6resources.frcscouting.scout.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import com.sub6resources.frcscouting.competition.model.Competition
 
 /*
  * Created by Matthew Whitaker on 11/22/2017.

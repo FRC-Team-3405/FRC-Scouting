@@ -1,4 +1,4 @@
-package com.sub6resources.frcscouting.database.models
+package com.sub6resources.frcscouting.form.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey

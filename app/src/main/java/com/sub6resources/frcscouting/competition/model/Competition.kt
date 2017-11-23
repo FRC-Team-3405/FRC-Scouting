@@ -1,6 +1,7 @@
-package com.sub6resources.frcscouting.database.models
+package com.sub6resources.frcscouting.competition.model
 
 import android.arch.persistence.room.*
+import com.sub6resources.frcscouting.form.model.Form
 
 @Entity(
         foreignKeys = arrayOf(

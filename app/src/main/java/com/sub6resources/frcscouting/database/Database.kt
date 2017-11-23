@@ -5,10 +5,10 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
-import com.sub6resources.frcscouting.database.models.Competition
-import com.sub6resources.frcscouting.database.models.Field
-import com.sub6resources.frcscouting.database.models.Form
-import com.sub6resources.frcscouting.database.models.Scout
+import com.sub6resources.frcscouting.competition.model.Competition
+import com.sub6resources.frcscouting.form.model.Field
+import com.sub6resources.frcscouting.form.model.Form
+import com.sub6resources.frcscouting.scout.model.Scout
 
 /**
  * Created by Whitaker2a on 11/22/2017.
