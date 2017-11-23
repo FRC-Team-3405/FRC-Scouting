@@ -218,16 +218,16 @@ fun View.enable() {
     isEnabled = true
 }
 
-fun EditText.isBlank(): Boolean = getString().isNullOrBlank()
+fun EditText.isBlank(): Boolean = getString().isBlank()
 
 // Find a view.  Not lazy.
-inline fun <reified V : View> View.find(id: Int): V = findViewById<V>(id)
+inline fun <reified V : View> View.find(id: Int): V = findViewById(id)
 
-inline fun <reified V : View> Activity.find(id: Int): V = findViewById<V>(id)
-inline fun <reified V : View> Dialog.find(id: Int): V = findViewById<V>(id)
-inline fun <reified V : View> Fragment.find(id: Int): V = view!!.findViewById<V>(id)
-inline fun <reified V : View> android.app.Fragment.find(id: Int): V = view!!.findViewById<V>(id)
-inline fun <reified V : View> RecyclerView.ViewHolder.find(id: Int): V = itemView.findViewById<V>(id)
+inline fun <reified V : View> Activity.find(id: Int): V = findViewById(id)
+inline fun <reified V : View> Dialog.find(id: Int): V = findViewById(id)
+inline fun <reified V : View> Fragment.find(id: Int): V = view!!.findViewById(id)
+inline fun <reified V : View> android.app.Fragment.find(id: Int): V = view!!.findViewById(id)
+inline fun <reified V : View> RecyclerView.ViewHolder.find(id: Int): V = itemView.findViewById(id)
 
 fun SpannableStringBuilder.appendWithSpan(str: String, ss: Any) {
     val start = this.length
