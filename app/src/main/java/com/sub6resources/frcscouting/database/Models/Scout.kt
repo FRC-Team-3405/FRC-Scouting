@@ -21,4 +21,6 @@ import android.arch.persistence.room.PrimaryKey
 class Scout() {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
+
+    var competitionId: Long = 0
 }

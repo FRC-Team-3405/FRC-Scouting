@@ -25,9 +25,8 @@ import com.sub6resources.frcscouting.database.Models.Scout
         version = 1
 )
 @TypeConverters(Converters::class)
-abstract class AppDatabase() : RoomDatabase(), Parcelable {
-    constructor(parcel: Parcel) : this() {
-    }
+abstract class AppDatabase : RoomDatabase() {
+
 
     companion object Injector {
         private var INSTANCE: AppDatabase? = null

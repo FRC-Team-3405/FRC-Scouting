@@ -1,17 +1,17 @@
 package com.sub6resources.utilities
 
-import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 
-abstract class BaseFragment: LifecycleFragment() {
+abstract class BaseFragment: Fragment() {
     abstract val fragLayout: Int
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val content = inflater?.inflate(fragLayout, container, false)
-        return content
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(fragLayout, container, false)
     }
 
     open fun onBackPressed(){
@@ -28,14 +28,14 @@ abstract class BaseFragment: LifecycleFragment() {
     }
 
     fun addFragment(fragment: BaseFragment){
-        FragmentTransaction(fragment, fragmentManager)
-                .into((context as BaseActivity).fragmentTargets!!)
+        FragmentTransaction(fragment, fragmentManager!!)
+                .into((context as BaseActivity).fragmentTargets)
                 .addFragment()
     }
 
     fun switchFragment(fragment: BaseFragment){
-        FragmentTransaction(fragment, fragmentManager)
-                .into((context as BaseActivity).fragmentTargets!!)
+        FragmentTransaction(fragment, fragmentManager!!)
+                .into((context as BaseActivity).fragmentTargets)
                 .switchFragment()
     }
 

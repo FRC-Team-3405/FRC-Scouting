@@ -76,7 +76,7 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
             onNavItemSelected(item)
             drawer?.closeDrawers()
-            drawer?.closeDrawer(sideNav)
+            drawer?.closeDrawer(sideNav!!)
             return true
         }
 
@@ -84,8 +84,8 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
         when(item.itemId) {
             android.R.id.home -> {
                 val intent = NavUtils.getParentActivityIntent(this)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                NavUtils.navigateUpTo(this, intent)
+                intent?.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                NavUtils.navigateUpTo(this, intent!!)
                 return true
             }
         }
@@ -93,7 +93,7 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
     }
 
         open fun openSideNav(){
-            drawer?.openDrawer(sideNav)
+            drawer?.openDrawer(sideNav!!)
         }
 
         open fun onNavItemSelected(item: MenuItem){}
