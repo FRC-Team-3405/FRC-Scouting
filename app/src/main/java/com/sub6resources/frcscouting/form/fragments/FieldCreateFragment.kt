@@ -12,6 +12,7 @@ import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.model.Choice
 import com.sub6resources.frcscouting.form.model.FieldType
 import com.sub6resources.frcscouting.form.recyclerviews.ChoiceListRecyclerAdapter
+import com.sub6resources.frcscouting.form.viewmodels.ChoiceCreateViewModel
 import com.sub6resources.utilities.BaseFragment
 import com.sub6resources.utilities.bind
 import com.sub6resources.utilities.getString
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_fieldcreate.*
 class QuestionCreateFragment : BaseFragment() {
     override val fragLayout: Int = R.layout.fragment_fieldcreate
 
-    //val viewModel by getSharedViewModel(ChoiceCreateViewModel::class.java)
+    val viewModel by getSharedViewModel(ChoiceCreateViewModel::class.java)
 
     val questionText by bind<EditText>(R.id.field_text)
     val questionType by bind<Spinner>(R.id.field_type_spinner)
@@ -68,65 +69,65 @@ class QuestionCreateFragment : BaseFragment() {
 
 
 
-        questionType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selectedItemIndex: Int, p3: Long) {
-                when (selectedItemIndex) {
-                    0 -> { //Multiple Choice
-                        if (viewModel.field.value.type == FieldType.TRUEFALSE) {
-                            choiceAdapter.removeAll()
-                            add_choice_fab.show()
-                        }
-                        viewModel.setQuestionMultipleChoice()
-                        if (choiceAdapter.dataSet.size == 0) {
-                            choiceAdapter.add(Choice())
-                        }
-                    }
-                    1 -> { //True/False
-                        if(viewModel.field.value.type != FieldType.TRUEFALSE) {
-                            viewModel.setQuestionTrueFalse()
-                            choiceAdapter.apply {
-                                removeAll()
-                                add(Choice("True"))
-                                add(Choice("False"))
-                            }
-                            add_choice_fab.hide()
-                        }
-                    }
-                    2 -> { //Short answer
-                        if (viewModel.field.value.type == FieldType.TRUEFALSE) {
-                            choiceAdapter.removeAll()
-                            add_choice_fab.show()
-                        }
-                        viewModel.setQuestionShortAnswer()
-                        if (choiceAdapter.dataSet.size == 0) {
-                            choiceAdapter.add(Choice())
-                        }
-                    }
-                    3 -> { //Image
-
-                    }
-                }
-            }
-
-        }
-
-        add_choice_fab.onClick {
-            choiceAdapter.add(Choice())
-        }
-
-        saveQuestion.onClick {
-            if (questionText.length() > 0) {
-                viewModel.saveQuestion(questionText.getString())
-            } else {
-                viewModel.saveQuestion("[Question]")
-            }
-            viewModel.createChoices(choiceAdapter.dataSet)
-            popFragment()
-        }
+//        questionType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onNothingSelected(p0: AdapterView<*>?) {
+//
+//            }
+//
+//            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selectedItemIndex: Int, p3: Long) {
+//                when (selectedItemIndex) {
+//                    0 -> { //Multiple Choice
+//                        if (viewModel.field.value.type == FieldType.TRUEFALSE) {
+//                            choiceAdapter.removeAll()
+//                            add_choice_fab.show()
+//                        }
+//                        viewModel.setQuestionMultipleChoice()
+//                        if (choiceAdapter.dataSet.size == 0) {
+//                            choiceAdapter.add(Choice())
+//                        }
+//                    }
+//                    1 -> { //True/False
+//                        if(viewModel.field.value.type != FieldType.TRUEFALSE) {
+//                            viewModel.setQuestionTrueFalse()
+//                            choiceAdapter.apply {
+//                                removeAll()
+//                                add(Choice("True"))
+//                                add(Choice("False"))
+//                            }
+//                            add_choice_fab.hide()
+//                        }
+//                    }
+//                    2 -> { //Short answer
+//                        if (viewModel.field.value.type == FieldType.TRUEFALSE) {
+//                            choiceAdapter.removeAll()
+//                            add_choice_fab.show()
+//                        }
+//                        viewModel.setQuestionShortAnswer()
+//                        if (choiceAdapter.dataSet.size == 0) {
+//                            choiceAdapter.add(Choice())
+//                        }
+//                    }
+//                    3 -> { //Image
+//
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        add_choice_fab.onClick {
+//            choiceAdapter.add(Choice())
+//        }
+//
+//        saveQuestion.onClick {
+//            if (questionText.length() > 0) {
+//                viewModel.saveQuestion(questionText.getString())
+//            } else {
+//                viewModel.saveQuestion("[Question]")
+//            }
+//            viewModel.createChoices(choiceAdapter.dataSet)
+//            popFragment()
+//        }
     }
 }
 

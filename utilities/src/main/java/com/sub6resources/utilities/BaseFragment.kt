@@ -1,5 +1,7 @@
 package com.sub6resources.utilities
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -46,6 +48,9 @@ abstract class BaseFragment: Fragment() {
     fun openSideNav(){
         (context as BaseActivity).openSideNav()
     }
+
+    fun <T: ViewModel> getViewModel(javaClass: Class<T>): Lazy<T> = lazy { ViewModelProviders.of(this).get(javaClass) }
+    fun <T: ViewModel> getSharedViewModel(javaClass: Class<T>): Lazy<T> = lazy { ViewModelProviders.of(activity!!).get(javaClass) }
 
 
 }
