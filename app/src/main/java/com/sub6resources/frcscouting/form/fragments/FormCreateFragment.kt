@@ -8,9 +8,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import com.sub6resources.frcscouting.R
+import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.recyclerviews.FieldListRecyclerAdapter
+import com.sub6resources.frcscouting.form.viewmodels.ChoiceCreateViewModel
+import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
 import com.sub6resources.utilities.BaseFragment
 import com.sub6resources.utilities.bind
+import com.sub6resources.utilities.getString
 import com.sub6resources.utilities.onClick
 
 /*
@@ -19,8 +23,8 @@ import com.sub6resources.utilities.onClick
 class FormCreateFragment : BaseFragment() {
     override val fragLayout: Int = R.layout.fragment_formcreate
 
-    //val viewModel by getSharedViewModel(QuestionListViewModel::class.java)
-    //val choiceCreateViewModel by getSharedViewModel(ChoiceCreateViewModel::class.java)
+    val viewModel by getSharedViewModel(FieldListViewModel::class.java)
+    val choiceCreateViewModel by getSharedViewModel(ChoiceCreateViewModel::class.java)
 
     val fieldRecycler by bind<RecyclerView>(R.id.recycler_field_list)
     val saveForm by bind<Button>(R.id.submit_form_button)
@@ -30,8 +34,8 @@ class FormCreateFragment : BaseFragment() {
     val fieldAdapter by lazy {
         FieldListRecyclerAdapter(listOf(),
                 onClick = { field ->
-                    //choiceCreateViewModel.question.value = field
-                    //addFragment(QuestionCreateFragment())
+                    choiceCreateViewModel.field.value = field
+                    addFragment(FieldCreateFragment())
                 }
         )
     }
@@ -42,15 +46,17 @@ class FormCreateFragment : BaseFragment() {
         fieldRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         fieldRecycler.adapter = fieldAdapter
 
-
-
         addField.onClick {
             //Create a new field in the view model.
-            //addFragment()
+            viewModel.form.value?.let {
+                choiceCreateViewModel.createField(it.id)
+            }
+            addFragment(FieldCreateFragment())
         }
 
         saveForm.onClick {
             //Save the form
+            viewModel.saveForm(formTitle.getString())
             popFragment()
         }
 

@@ -17,7 +17,7 @@ class ChoiceListRecyclerViewHolder(v: View, val spinner: Spinner): BaseRecyclerV
 
     val choiceText by bind<EditText>(R.id.item_choice_text)
     override fun onBind(data: Choice) {
-        choiceText.isEnabled = !(spinner.selectedItemPosition == 1) //Check to see if answer is true/false and enable/disable edittext accordingly.
+        choiceText.isEnabled = (spinner.selectedItemPosition == 0) //If answer is multiple choice, allow custom answers, otherwise disable edittext.
         choiceText.setText(data.choiceText)
         RxTextView.afterTextChangeEvents(choiceText).subscribe {
             data.choiceText = it.editable().toString()
