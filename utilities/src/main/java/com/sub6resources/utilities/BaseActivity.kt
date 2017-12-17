@@ -1,6 +1,8 @@
 package com.sub6resources.utilities
 
 import android.Manifest
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -17,71 +19,70 @@ import android.view.MenuItem
 /**
  * Copyright (c) 2017 Matthew Whitaker.
  */
-abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-        open val menu: Int? = null
-        open val toolbar: Int? = null
-        open val fragmentTargets: Int = 0
-        open val landingFragment: BaseFragment? = null
-        open val drawer: DrawerLayout? = null
-        open val sideNav: NavigationView? = null
+abstract class BaseActivity(private val activityLayout: Int) : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    open val menu: Int? = null
+    open val toolbar: Int? = null
+    open val fragmentTargets: Int = 0
+    open val landingFragment: BaseFragment? = null
+    open val drawer: DrawerLayout? = null
+    open val sideNav: NavigationView? = null
 
 
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(activityLayout)
-            setUp()
-            landingFragment?.let {
-                FragmentTransaction(it, supportFragmentManager).into(fragmentTargets).switchFragment()
-                fragmentTargets.let {
-                    if(savedInstanceState == null){
-                        FragmentTransaction(landingFragment as Fragment, supportFragmentManager)
-                                .into(fragmentTargets)
-                                .switchFragment()
-                    }
-                }
-            }
-            toolbar?.let {
-                setSupportActionBar(findViewById(it))
-                if(parentActivityIntent != null) {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                }
-            }
-            sideNav?.setNavigationItemSelectedListener(this)
-        }
-
-        open fun onBackButtonPressed() {}
-
-        override fun onBackPressed() {
-
-            onBackButtonPressed()
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(activityLayout)
+        setUp()
+        landingFragment?.let {
+            FragmentTransaction(it, supportFragmentManager).into(fragmentTargets).switchFragment()
             fragmentTargets.let {
-                val frag = supportFragmentManager.findFragmentById(fragmentTargets)
-                if(frag is BaseFragment){
-                    frag.onBackPressed()
-                    return
+                if (savedInstanceState == null) {
+                    FragmentTransaction(landingFragment as Fragment, supportFragmentManager)
+                            .into(fragmentTargets)
+                            .switchFragment()
                 }
             }
-            super.onBackPressed()
         }
-
-        override fun onCreateOptionsMenu(_menu: Menu): Boolean {
-            menu.isNotNull {
-                menuInflater.inflate(this.menu as Int, _menu)
+        toolbar?.let {
+            setSupportActionBar(findViewById(it))
+            if (parentActivityIntent != null) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
-            return true
         }
+        sideNav?.setNavigationItemSelectedListener(this)
+    }
 
-        override fun onNavigationItemSelected(item: MenuItem): Boolean {
-            onNavItemSelected(item)
-            drawer?.closeDrawers()
-            drawer?.closeDrawer(sideNav!!)
-            return true
+    open fun onBackButtonPressed() {}
+
+    override fun onBackPressed() {
+
+        onBackButtonPressed()
+
+        fragmentTargets.let {
+            val frag = supportFragmentManager.findFragmentById(fragmentTargets)
+            if (frag is BaseFragment) {
+                frag.onBackPressed()
+                return
+            }
         }
+        super.onBackPressed()
+    }
+
+    override fun onCreateOptionsMenu(_menu: Menu): Boolean {
+        menu.isNotNull {
+            menuInflater.inflate(this.menu as Int, _menu)
+        }
+        return true
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        onNavItemSelected(item)
+        drawer?.closeDrawers()
+        drawer?.closeDrawer(sideNav!!)
+        return true
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             android.R.id.home -> {
                 val intent = NavUtils.getParentActivityIntent(this)
                 intent?.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -92,39 +93,41 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
         return super.onOptionsItemSelected(item)
     }
 
-        open fun openSideNav(){
-            drawer?.openDrawer(sideNav!!)
-        }
+    open fun openSideNav() {
+        drawer?.openDrawer(sideNav!!)
+    }
 
-        open fun onNavItemSelected(item: MenuItem){}
+    open fun onNavItemSelected(item: MenuItem) {}
 
-        open fun setUp(){}
+    open fun setUp() {}
 
-        fun addFragment(fragment: BaseFragment){
-            FragmentTransaction(fragment, supportFragmentManager)
-                    .into(fragmentTargets)
-                    .addFragment()
-        }
+    fun addFragment(fragment: BaseFragment) {
+        FragmentTransaction(fragment, supportFragmentManager)
+                .into(fragmentTargets)
+                .addFragment()
+    }
 
-        fun switchFragment(fragment: BaseFragment){
-            FragmentTransaction(fragment, supportFragmentManager)
-                    .into(fragmentTargets)
-                    .switchFragment()
-        }
+    fun switchFragment(fragment: BaseFragment) {
+        FragmentTransaction(fragment, supportFragmentManager)
+                .into(fragmentTargets)
+                .switchFragment()
+    }
 
-        fun popFragment(){
-            fragmentManager?.popBackStack()
-        }
+    fun popFragment() {
+        fragmentManager?.popBackStack()
+    }
 
-        fun popAdd(fragment: BaseFragment){
-            fragmentManager?.popBackStack()
-            addFragment(fragment)
-        }
+    fun popAdd(fragment: BaseFragment) {
+        fragmentManager?.popBackStack()
+        addFragment(fragment)
+    }
+
+    fun <T: ViewModel> getViewModel(javaClass: Class<T>): Lazy<T> = lazy { ViewModelProviders.of(this).get(javaClass) }
 
     //Private variables to assist with the checkPermission function.
-    private var onGranted: ArrayList<() -> Unit> = ArrayList<() -> Unit>()
-    private var onDenied: ArrayList<() -> Unit> = ArrayList<() -> Unit>()
-    private var savedPermissions: ArrayList<String> = ArrayList<String>()
+    private var onGranted: ArrayList<() -> Unit> = ArrayList()
+    private var onDenied: ArrayList<() -> Unit> = ArrayList()
+    private var savedPermissions: ArrayList<String> = ArrayList()
     private var currentRequestCode = 0
 
     /**
@@ -155,8 +158,8 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
         this.onGranted.add(currentRequestCode, onGranted)
         this.onDenied.add(currentRequestCode, onDenied)
 
-        if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                 showExplanation(currentRequestCode)
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(permission), currentRequestCode)
@@ -186,15 +189,15 @@ abstract class BaseActivity(private val activityLayout: Int): AppCompatActivity(
             } else {
                 this.onGranted[requestCode]()
             }
-        } catch(e: IndexOutOfBoundsException) {
+        } catch (e: IndexOutOfBoundsException) {
             throw IllegalStateException("You must use this function inside of the checkPermission function")
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(grantResults.isNotEmpty()) {
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 onGranted[requestCode]()
             } else {
                 onDenied[requestCode]()

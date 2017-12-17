@@ -13,7 +13,8 @@ import android.arch.persistence.room.PrimaryKey
 enum class FieldType {
     TRUEFALSE,
     BLANK,
-    MUILTICHOICE
+    MUILTICHOICE,
+    IMAGE
 }
 
 

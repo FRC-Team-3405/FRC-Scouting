@@ -9,6 +9,7 @@ class Form() {
     var id: Long = 0
 
     var name: String = ""
+    var isDraft: Boolean = true
     @Ignore
     constructor(_name: String): this() {
         this.name = _name

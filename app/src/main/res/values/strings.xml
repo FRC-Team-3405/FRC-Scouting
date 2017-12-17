@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FRC Scouting</string>
+    <array name="field_types">
+        <item>Multiple Choice</item>
+        <item>True/False</item>
+        <item>Short Answer</item>
+        <item>Image</item>
+    </array>
 </resources>
