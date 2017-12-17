@@ -5,11 +5,12 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.model.Form
+import com.sub6resources.utilities.BaseViewModel
 
 /**
  * Created by Matthew Whitaker on 12/9/17.
  */
-class FieldListViewModel: ViewModel() {
+class FieldListViewModel: BaseViewModel() {
     var form: LiveData<Form> = MutableLiveData()
     var fields: LiveData<List<Field>> = MutableLiveData()
 

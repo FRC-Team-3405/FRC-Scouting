@@ -1,20 +1,29 @@
 package com.sub6resources.frcscouting.form.viewmodels
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import com.sub6resources.frcscouting.form.model.Choice
+import com.sub6resources.frcscouting.form.model.ChoiceDao
 import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.model.FieldType
+import com.sub6resources.utilities.BaseViewModel
+import org.koin.standalone.inject
 
 /**
  * Created by ryanberger on 12/3/17.
  */
 
-class ChoiceCreateViewModel : ViewModel() {
+class ChoiceCreateViewModel : BaseViewModel() {
     //TODO: Create db stuff.
 
+    val choiceDao by inject<ChoiceDao>()
+
     val field: MutableLiveData<Field> = MutableLiveData()
-    val choices: MutableLiveData<List<Choice>> = MutableLiveData()
+    val choices: LiveData<List<Choice>> = Transformations.switchMap(field, {
+        MutableLiveData<List<Choice>>()
+    })
 
     fun saveChoices() {
         choices.value?.let {

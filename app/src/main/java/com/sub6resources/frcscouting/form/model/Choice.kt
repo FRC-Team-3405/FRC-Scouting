@@ -10,13 +10,12 @@ import android.arch.persistence.room.*
  */
 
 @Entity(
-        foreignKeys = arrayOf(
-                ForeignKey(
-                        entity = Field::class,
-                        childColumns = arrayOf("fieldId"),
-                        parentColumns = arrayOf("id"))
-        ),
-        indices = arrayOf(Index("fieldId"))
+        foreignKeys = [
+            ForeignKey(
+                entity = Field::class,
+                childColumns = arrayOf("fieldId"),
+                parentColumns = arrayOf("id"))],
+        indices = [Index("fieldId")]
 
 )
 class Choice() {
@@ -30,4 +29,17 @@ class Choice() {
     constructor(_choiceText: String): this() {
         this.choiceText = _choiceText
     }
+}
+
+
+@Dao
+interface ChoiceDao {
+    @Insert()
+    fun create(choice: Choice)
+
+    @Insert()
+    fun createAll(choices: List<Choice>)
+
+    @Update
+    fun update(choice: Choice)
 }

@@ -28,10 +28,10 @@ class FieldCreateFragment : BaseFragment() {
 
     val viewModel by getSharedViewModel(ChoiceCreateViewModel::class.java)
 
-    val questionText by bind<EditText>(R.id.field_text)
-    val fieldType by bind<Spinner>(R.id.field_type_spinner)
-    val choiceRecycler by bind<RecyclerView>(R.id.recycler_answer_list)
-    val saveQuestion by bind<Button>(R.id.save_field)
+    private val questionText by bind<EditText>(R.id.field_text)
+    private val fieldType by bind<Spinner>(R.id.field_type_spinner)
+    private val choiceRecycler by bind<RecyclerView>(R.id.recycler_answer_list)
+    private val saveQuestion by bind<Button>(R.id.save_field)
 
     val choiceAdapter by lazy {
         ChoiceListRecyclerAdapter(listOf(), fieldType)
@@ -56,20 +56,14 @@ class FieldCreateFragment : BaseFragment() {
                             else -> 0
                         }
                 )
-                viewModel.choices.removeObservers(this)
-                viewModel.getChoices()
-
-                viewModel.choices.observe(this, Observer {
-                    if (it != null && !it.isEmpty()) {
-                        choiceAdapter.replaceData(it)
-                    }
-                })
-
             }
         })
 
-
-
+        viewModel.choices.observe(this, Observer {
+            if (it != null && !it.isEmpty()) {
+                choiceAdapter.replaceData(it)
+            }
+        })
 
         fieldType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {

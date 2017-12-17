@@ -15,6 +15,6 @@ class DatabaseModule: AndroidModule() {
                 .build()
     }
     override fun context() = applicationContext {
-
+        provide { db.choiceDao }
     }
 }

@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import com.afollestad.materialdialogs.MaterialDialog
+import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext
 import java.nio.charset.Charset
 import java.nio.file.Files
@@ -262,4 +263,3 @@ private class ViewLazy<in T, out V>(private val initializer: (T, KProperty<*>) -
     }
 }
 
-inline fun <reified T> ViewModel.inject(name: String = "") = lazy { StandAloneContext.koinContext.get<T>(name) }
