@@ -12,5 +12,4 @@ class FormCreateActivity : BaseActivity(R.layout.activity_formcreate) {
 
     override val landingFragment: BaseFragment = FormCreateFragment()
     override val fragmentTargets: Int = R.id.main_fragment_target
-
 }

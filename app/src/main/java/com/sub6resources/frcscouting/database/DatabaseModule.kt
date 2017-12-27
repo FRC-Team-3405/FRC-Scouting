@@ -16,5 +16,7 @@ class DatabaseModule: AndroidModule() {
     }
     override fun context() = applicationContext {
         provide { db.choiceDao }
+        provide { db.formDao }
+        provide { db.fieldDao }
     }
 }

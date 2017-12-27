@@ -3,11 +3,7 @@ package com.sub6resources.frcscouting.form.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
-import com.sub6resources.frcscouting.form.model.Choice
-import com.sub6resources.frcscouting.form.model.ChoiceDao
-import com.sub6resources.frcscouting.form.model.Field
-import com.sub6resources.frcscouting.form.model.FieldType
+import com.sub6resources.frcscouting.form.model.*
 import com.sub6resources.utilities.BaseViewModel
 import org.koin.standalone.inject
 
@@ -16,9 +12,9 @@ import org.koin.standalone.inject
  */
 
 class ChoiceCreateViewModel : BaseViewModel() {
-    //TODO: Create db stuff.
 
     val choiceDao by inject<ChoiceDao>()
+    val fieldDao by inject<FieldDao>()
 
     val field: MutableLiveData<Field> = MutableLiveData()
     val choices: LiveData<List<Choice>> = Transformations.switchMap(field, {
@@ -27,13 +23,13 @@ class ChoiceCreateViewModel : BaseViewModel() {
 
     fun saveChoices() {
         choices.value?.let {
-            //db.choiceDao.createAllChoices(it)
+            choiceDao.createAll(it)
         }
     }
 
     fun getChoices() {
         field.value?.let {
-            //choices = db.choiceDao.getChoiceForQuestion(it.id)
+            //choices = choiceDao.getChoiceForField(it.id)
         }
     }
 
@@ -43,23 +39,23 @@ class ChoiceCreateViewModel : BaseViewModel() {
             choiceText = ""
             fieldId = field.value?.id as Long
         }
-        //c.id = db.choiceDao.createChoice(c)
-        //db.choiceDao.updateChoice(c)
+        c.id = choiceDao.create(c)
+        choiceDao.update(c)
     }
 
     fun createChoices(choices: List<Choice>) {
-        /*db.choiceDao.createAllChoices(choices.map { choice ->
+        choiceDao.createAll(choices.map { choice ->
             choice.apply {
                 fieldId = field.value?.id as Long
             }
-        })*/
+        })
     }
 
     fun updateChoiceText(choice: Choice, text: String) {
         choice.apply {
             choiceText = text
         }
-        //db.choiceDao.updateChoice(choice)
+        choiceDao.update(choice)
     }
 
     fun createField(_formId: Long) {
@@ -68,7 +64,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
             formId = _formId
         }
 
-        //q.id = db.questionDao.createQuestion(q)
+        q.id = fieldDao.create(q)
         field.value = q
     }
 
@@ -103,7 +99,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
             } else {
                 it.fieldText = "[blank]"
             }
-            //db.questionDao.updateQuestion(it)
+            fieldDao.update(it)
         }
 
     }

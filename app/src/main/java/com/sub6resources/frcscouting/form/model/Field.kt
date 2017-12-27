@@ -1,9 +1,7 @@
 package com.sub6resources.frcscouting.form.model
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Index
-import android.arch.persistence.room.PrimaryKey
+import android.arch.lifecycle.LiveData
+import android.arch.persistence.room.*
 
 /*
  * Created by Matthew Whitaker on 11/22/2017.
@@ -36,4 +34,25 @@ class Field {
     var formId: Long = 0
 
     lateinit var type: FieldType
+}
+
+@Dao
+interface FieldDao {
+    @Insert
+    fun create(field: Field): Long
+
+    @Update
+    fun update(field: Field)
+
+    @Delete
+    fun delete(field: Field)
+
+    @Query(
+            """
+            SELECT * FROM Field WHERE formId = :arg0
+            """
+    )
+    fun getFieldsForForm(formId: Long): LiveData<List<Field>>
+
+
 }

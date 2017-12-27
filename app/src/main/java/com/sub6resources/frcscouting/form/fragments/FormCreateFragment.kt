@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import com.sub6resources.frcscouting.R
-import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.recyclerviews.FieldListRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.ChoiceCreateViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
@@ -50,8 +49,8 @@ class FormCreateFragment : BaseFragment() {
             //Create a new field in the view model.
             viewModel.form.value?.let {
                 choiceCreateViewModel.createField(it.id)
+                addFragment(FieldCreateFragment())
             }
-            addFragment(FieldCreateFragment())
         }
 
         saveForm.onClick {
@@ -59,7 +58,6 @@ class FormCreateFragment : BaseFragment() {
             viewModel.saveForm(formTitle.getString())
             popFragment()
         }
-
     }
 }
 
