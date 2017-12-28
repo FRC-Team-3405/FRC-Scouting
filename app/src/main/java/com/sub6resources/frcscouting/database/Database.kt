@@ -1,10 +1,8 @@
 package com.sub6resources.frcscouting.database
 
 import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import android.content.Context
 import com.sub6resources.frcscouting.competition.model.Competition
 import com.sub6resources.frcscouting.form.model.*
 import com.sub6resources.frcscouting.scout.model.Scout

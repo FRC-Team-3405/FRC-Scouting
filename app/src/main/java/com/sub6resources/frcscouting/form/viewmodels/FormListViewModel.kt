@@ -14,4 +14,8 @@ class FormListViewModel : BaseViewModel() {
 
     val forms: LiveData<List<Form>> by lazy { formDao.getForms() }
     val drafts: LiveData<List<Form>> by lazy { formDao.getFormDrafts() }
+
+    fun syncData() {
+        //TODO Sync Data With Backend Database
+    }
 }

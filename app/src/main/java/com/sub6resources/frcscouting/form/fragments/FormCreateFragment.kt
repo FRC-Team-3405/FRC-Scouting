@@ -1,9 +1,11 @@
 package com.sub6resources.frcscouting.form.fragments
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -42,8 +44,27 @@ class FormCreateFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.let {
+            it.intent?.let {
+                viewModel.selectForm(it.getLongExtra("formId", 0))
+            }
+        }
+
         fieldRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         fieldRecycler.adapter = fieldAdapter
+
+        viewModel.fields.observe(this, Observer {
+            it?.let {
+                fieldAdapter.replaceData(it)
+            }
+        })
+
+        viewModel.form.observe(this, Observer {
+            it?.let { form ->
+                if(form.isDraft)
+                    formTitle.setText(form.name)
+            }
+        })
 
         addField.onClick {
             //Create a new field in the view model.
@@ -56,7 +77,7 @@ class FormCreateFragment : BaseFragment() {
         saveForm.onClick {
             //Save the form
             viewModel.saveForm(formTitle.getString())
-            popFragment()
+            activity?.finish()
         }
     }
 }

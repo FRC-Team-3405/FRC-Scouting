@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.FormCreateActivity
@@ -35,8 +36,9 @@ class FormListFragment : BaseFragment() {
                 context = context!!,
                 attributeSet = null,
                 buttonClick = {
-                    fieldListViewModel.selectForm(it)
-                    addFragment(FormCreateFragment())
+                    startActivity(Intent(activity, FormCreateActivity::class.java).apply {
+                        putExtra("formId", it)
+                    })
                 },
 
                 onClick = {
@@ -85,9 +87,18 @@ class FormListFragment : BaseFragment() {
         })
 
         create_form_fab.onClick {
-            fieldListViewModel.createForm("[Draft]")
-            startActivity(Intent(activity, FormCreateActivity::class.java))
+            val id = fieldListViewModel.createForm("[Draft]")
+            startActivity(Intent(activity, FormCreateActivity::class.java).apply {
+                putExtra("formId", id)
+            })
         }
 
+        swipe_container.setOnRefreshListener {
+            //This is called when user swipes down on Form list
+            swipe_container.isRefreshing = true
+            //Sync Data
+            viewModel.syncData()
+            swipe_container.isRefreshing = false
+        }
     }
 }

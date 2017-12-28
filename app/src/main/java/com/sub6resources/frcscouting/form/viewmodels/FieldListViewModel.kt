@@ -29,7 +29,7 @@ class FieldListViewModel: BaseViewModel() {
         }
     }
 
-    fun createForm(name: String) {
+    fun createForm(name: String): Long {
         val f = Form(name).apply {
             isDraft = true
         }
@@ -37,6 +37,7 @@ class FieldListViewModel: BaseViewModel() {
         f.id = formDao.create(f)
         form = formDao.get(f.id)
         fields = fieldDao.getFieldsForForm(f.id)
+        return f.id
     }
 
     fun selectForm(id: Long) {
