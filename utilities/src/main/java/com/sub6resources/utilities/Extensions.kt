@@ -3,6 +3,9 @@ package com.sub6resources.utilities
 import android.app.Activity
 import android.app.Dialog
 import android.app.NotificationManager
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.content.ClipboardManager
 import android.content.Context
@@ -261,5 +264,13 @@ private class ViewLazy<in T, out V>(private val initializer: (T, KProperty<*>) -
         @Suppress("UNCHECKED_CAST")
         return value as V
     }
+}
+
+fun <T> LifecycleOwner.observeNotNull(data: LiveData<T>, callback: (paramater: T) -> Unit) {
+    data.observe(this, Observer {
+        it?.let{
+            callback(it)
+        }
+    })
 }
 

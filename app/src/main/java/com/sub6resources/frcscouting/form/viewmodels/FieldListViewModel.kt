@@ -2,6 +2,7 @@ package com.sub6resources.frcscouting.form.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.model.FieldDao
 import com.sub6resources.frcscouting.form.model.Form
@@ -16,8 +17,9 @@ class FieldListViewModel: BaseViewModel() {
     val formDao by inject<FormDao>()
     val fieldDao by inject<FieldDao>()
 
-    var form: LiveData<Form> = MutableLiveData()
-    var fields: LiveData<List<Field>> = MutableLiveData()
+    val formId = MutableLiveData<Long>()
+    val form: LiveData<Form> = Transformations.switchMap(formId) { formId -> formDao.get(formId) }
+    var fields: LiveData<List<Field>> = Transformations.switchMap(formId) { formId -> fieldDao.getFieldsForForm(formId) }
 
 
     fun saveForm(name: String) {
@@ -33,15 +35,11 @@ class FieldListViewModel: BaseViewModel() {
         val f = Form(name).apply {
             isDraft = true
         }
-
-        f.id = formDao.create(f)
-        form = formDao.get(f.id)
-        fields = fieldDao.getFieldsForForm(f.id)
-        return f.id
+        formId.value = formDao.create(f)
+        return formId.value!!
     }
 
     fun selectForm(id: Long) {
-        form = formDao.get(id)
-        fields = fieldDao.getFieldsForForm(id)
+        formId.value = id
     }
 }

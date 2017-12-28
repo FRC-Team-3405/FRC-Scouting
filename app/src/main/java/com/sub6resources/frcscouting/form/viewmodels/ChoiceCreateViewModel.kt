@@ -16,7 +16,8 @@ class ChoiceCreateViewModel : BaseViewModel() {
     val choiceDao by inject<ChoiceDao>()
     val fieldDao by inject<FieldDao>()
 
-    val field: MutableLiveData<Field> = MutableLiveData()
+    val fieldId = MutableLiveData<Long>()
+    val field = Transformations.switchMap(fieldId) { id -> fieldDao.get(id) }
     val choices: LiveData<List<Choice>> = Transformations.switchMap(field, {
         MutableLiveData<List<Choice>>()
     })
@@ -37,7 +38,9 @@ class ChoiceCreateViewModel : BaseViewModel() {
     fun createChoice() {
         val c = Choice().apply {
             choiceText = ""
-            fieldId = field.value?.id as Long
+            field.value?.let {
+                fieldId = field.value?.id as Long
+            }
         }
         c.id = choiceDao.create(c)
         choiceDao.update(c)
@@ -46,7 +49,9 @@ class ChoiceCreateViewModel : BaseViewModel() {
     fun createChoices(choices: List<Choice>) {
         choiceDao.createAll(choices.map { choice ->
             choice.apply {
-                fieldId = field.value?.id as Long
+                field.value?.let {
+                    fieldId = field.value?.id as Long
+                }
             }
         })
     }
@@ -59,13 +64,12 @@ class ChoiceCreateViewModel : BaseViewModel() {
     }
 
     fun createField(_formId: Long) {
-        val q = Field().apply {
+        val f = Field().apply {
             type = FieldType.MUILTICHOICE
             formId = _formId
         }
 
-        q.id = fieldDao.create(q)
-        field.value = q
+        fieldId.value = fieldDao.create(f)
     }
 
     fun setFieldMultipleChoice() {

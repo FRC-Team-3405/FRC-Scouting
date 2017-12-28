@@ -54,5 +54,8 @@ interface FieldDao {
     )
     fun getFieldsForForm(formId: Long): LiveData<List<Field>>
 
+    @Query("SELECT * FROM Field WHERE id = :arg0")
+    fun get(fieldId: Long): LiveData<Field>
+
 
 }

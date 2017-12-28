@@ -1,11 +1,9 @@
 package com.sub6resources.frcscouting.form.fragments
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -13,10 +11,7 @@ import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.recyclerviews.FieldListRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.ChoiceCreateViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
-import com.sub6resources.utilities.BaseFragment
-import com.sub6resources.utilities.bind
-import com.sub6resources.utilities.getString
-import com.sub6resources.utilities.onClick
+import com.sub6resources.utilities.*
 
 /*
  * Created by Matthew on 12/2/17.
@@ -35,7 +30,7 @@ class FormCreateFragment : BaseFragment() {
     val fieldAdapter by lazy {
         FieldListRecyclerAdapter(listOf(),
                 onClick = { field ->
-                    choiceCreateViewModel.field.value = field
+                    choiceCreateViewModel.fieldId.value = field.id
                     addFragment(FieldCreateFragment())
                 }
         )
@@ -53,18 +48,14 @@ class FormCreateFragment : BaseFragment() {
         fieldRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         fieldRecycler.adapter = fieldAdapter
 
-        viewModel.fields.observe(this, Observer {
-            it?.let {
-                fieldAdapter.replaceData(it)
-            }
-        })
+        observeNotNull(viewModel.fields) {
+            fieldAdapter.replaceData(it)
+        }
 
-        viewModel.form.observe(this, Observer {
-            it?.let { form ->
-                if(form.isDraft)
-                    formTitle.setText(form.name)
-            }
-        })
+        observeNotNull(viewModel.form) { form ->
+            if(form.isDraft)
+                formTitle.setText(form.name)
+        }
 
         addField.onClick {
             //Create a new field in the view model.
