@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/recycler_form_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            tools:text="Form Title" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+        <Button
+            android:id="@+id/recycler_take_form"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:text="Take Form" />
+    </LinearLayout>
+
+
+</android.support.v7.widget.CardView>

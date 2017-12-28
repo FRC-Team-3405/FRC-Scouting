@@ -6,7 +6,7 @@ import com.sub6resources.frcscouting.form.model.FieldType
 /*
  * Created by Matthew Whitaker on 11/22/2017.
  */
-object Converters {
+class Converters {
     @TypeConverter
     fun fromFieldType(value: String): FieldType = FieldType.valueOf(value)
 

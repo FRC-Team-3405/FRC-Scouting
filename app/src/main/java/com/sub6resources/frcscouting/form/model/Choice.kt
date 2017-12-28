@@ -3,6 +3,7 @@ package com.sub6resources.frcscouting.form.model
 /**
  * Created by whitaker on 12/2/17.
  */
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 /**
@@ -35,11 +36,15 @@ class Choice() {
 @Dao
 interface ChoiceDao {
     @Insert()
-    fun create(choice: Choice)
+    fun create(choice: Choice): Long
 
     @Insert()
     fun createAll(choices: List<Choice>)
 
     @Update
     fun update(choice: Choice)
+
+    @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
+    fun getChoiceForField(fieldId: Long): LiveData<List<Choice>>
+
 }

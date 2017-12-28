@@ -2,17 +2,24 @@ package com.sub6resources.frcscouting.form.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.Transformations
 import com.sub6resources.frcscouting.form.model.Field
+import com.sub6resources.frcscouting.form.model.FieldDao
 import com.sub6resources.frcscouting.form.model.Form
+import com.sub6resources.frcscouting.form.model.FormDao
 import com.sub6resources.utilities.BaseViewModel
+import org.koin.standalone.inject
 
 /**
  * Created by Matthew Whitaker on 12/9/17.
  */
 class FieldListViewModel: BaseViewModel() {
-    var form: LiveData<Form> = MutableLiveData()
-    var fields: LiveData<List<Field>> = MutableLiveData()
+    val formDao by inject<FormDao>()
+    val fieldDao by inject<FieldDao>()
+
+    val formId = MutableLiveData<Long>()
+    val form: LiveData<Form> = Transformations.switchMap(formId) { formId -> formDao.get(formId) }
+    var fields: LiveData<List<Field>> = Transformations.switchMap(formId) { formId -> fieldDao.getFieldsForForm(formId) }
 
 
     fun saveForm(name: String) {
@@ -20,22 +27,20 @@ class FieldListViewModel: BaseViewModel() {
             it.isDraft = false
             it.name = name
 
-            //db.formDao.updateForm(it)
+            formDao.update(it)
         }
     }
 
-    fun createQuiz(name: String) {
+    fun createForm(name: String): Long {
         val f = Form(name).apply {
             isDraft = true
         }
-
-        //q.id = db.formDao.createForm(f)
-        //form = db.formDao.getForm(f.id)
-        //questions = db.fieldDao.getFieldsForForm(f.id)
+        val id = formDao.create(f)
+        formId.value = id
+        return id
     }
 
-    fun selectQuiz(id: Long) {
-        //form = db.formDao.getForm(id)
-        //fields = db.fieldDao.getFieldsForForm(id)
+    fun selectForm(id: Long) {
+        formId.value = id
     }
 }
