@@ -35,8 +35,9 @@ class FieldListViewModel: BaseViewModel() {
         val f = Form(name).apply {
             isDraft = true
         }
-        formId.value = formDao.create(f)
-        return formId.value!!
+        val id = formDao.create(f)
+        formId.value = id
+        return id
     }
 
     fun selectForm(id: Long) {
