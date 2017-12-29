@@ -50,7 +50,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Image"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,10 +59,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="x images selected"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/field_take_image_add_button"
                 app:layout_constraintStart_toEndOf="@+id/field_take_image_add_button"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="x images selected" />
+
+            <LinearLayout
+                android:id="@+id/field_take_images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/field_take_image_add_button"
+                android:orientation="horizontal">
+
+            </LinearLayout>
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

@@ -61,6 +61,24 @@ class FormViewModel : BaseViewModel() {
 
     }
 
+    fun appendToAnswer(field: Field, additionalAnswer: String) {
+        val correspondingFieldResponse = getFieldResponseOfField(field)
+        if(correspondingFieldResponse != null) {
+            correspondingFieldResponse.apply {
+                response += ","+additionalAnswer
+            }
+            fieldResponseDao.update(correspondingFieldResponse)
+        } else {
+            formResponseId.value?.let { formRId ->
+                fieldResponseDao.create(FieldResponse().apply {
+                    fieldId = field.id
+                    formResponseId = formRId
+                    response = additionalAnswer
+                })
+            }
+        }
+    }
+
     private fun getFieldResponseOfField(field: Field): FieldResponse? {
         fieldResponses.value?.let {
             for(fieldResponse in it) {

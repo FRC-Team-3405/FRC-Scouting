@@ -1,5 +1,6 @@
 package com.sub6resources.frcscouting.form.recyclerviews
 
+import android.graphics.Bitmap
 import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.widget.*
@@ -13,7 +14,7 @@ import com.sub6resources.utilities.*
 /**
  * Created by whitaker on 12/28/17.
  */
-class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val selectImages: (field: Field) -> String): BaseRecyclerViewHolder<Field>(v) {
+class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val selectImages: (field: Field, callback: (data: Bitmap) -> Unit) -> Unit): BaseRecyclerViewHolder<Field>(v) {
 
     val questionText by bind<TextView>(R.id.field_take_text)
     val answerEditText by bind<EditText>(R.id.field_take_answer)
@@ -21,6 +22,7 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
     val answerImageContainer by bind<ConstraintLayout>(R.id.field_take_image_container)
     val answerImageSelectButton by bind<Button>(R.id.field_take_image_add_button)
     val answerImageText by bind<TextView>(R.id.field_take_image_text)
+    val answerImages by bind<LinearLayout>(R.id.field_take_images)
 
     override fun onBind(data: Field) {
         questionText.text = data.fieldText
@@ -52,15 +54,19 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
                 answerImageContainer.show()
                 answerImageText.text = "0 images selected"
                 answerImageSelectButton.onClick {
-                    val newAnswer = selectImages(data)
-                    setAnswer(data, "IMGS:")
+                    selectImages(data) {
+                        answerImages.addView(ImageView(answerImages.context).apply {
+                            setImageBitmap(it)
+                            setPadding(8, 8, 8, 8)
+                        })
+                    }
                 }
             }
         }
     }
 }
 
-class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, selectImages: (field: Field) -> String):
+class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, selectImages: (field: Field, callback: (data: Bitmap) -> Unit) -> Unit):
         BaseRecyclerViewAdapter<Field>(fields.toMutableList(), R.layout.item_field_take, {
             FormRecyclerViewHolder(it, getChoicesForField, setAnswer, selectImages)
         })

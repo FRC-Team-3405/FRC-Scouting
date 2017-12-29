@@ -1,6 +1,10 @@
 package com.sub6resources.frcscouting.form.fragments
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -10,6 +14,10 @@ import com.sub6resources.frcscouting.form.recyclerviews.FormRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.utilities.*
 import kotlinx.android.synthetic.main.fragment_form.*
+import android.util.Base64
+import android.util.Log
+import java.io.ByteArrayOutputStream
+
 
 /**
  * Created by whitaker on 12/28/17.
@@ -34,9 +42,19 @@ class FormFragment: BaseFragment() {
                 setAnswer = { field, answer ->
                     viewModel.setAnswer(field, answer)
                 },
-                selectImages = { field ->
-                    //This should return some base64 encoded images in the future.
-                    "IMGS:"
+                selectImages = { field, callback ->
+                    (activity as BaseActivity).startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE)) { resultCode, data ->
+                        if (resultCode == RESULT_OK) {
+                            val imageBitmap = data.extras.get("data") as Bitmap
+                            val baos = ByteArrayOutputStream()
+                            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                            val byteArrayImage = baos.toByteArray()
+                            val encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
+                            //Get current answer
+                            viewModel.appendToAnswer(field, encodedImage)
+                            callback(imageBitmap)
+                        }
+                    }
                 }
         )
     }
