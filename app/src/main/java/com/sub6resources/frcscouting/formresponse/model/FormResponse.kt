@@ -2,6 +2,7 @@ package com.sub6resources.frcscouting.formresponse.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import android.arch.persistence.room.ForeignKey.CASCADE
 import com.sub6resources.frcscouting.form.model.Form
 
 /**
@@ -12,7 +13,8 @@ import com.sub6resources.frcscouting.form.model.Form
                 ForeignKey(
                         entity = Form::class,
                         childColumns = arrayOf("formId"),
-                        parentColumns = arrayOf("id")
+                        parentColumns = arrayOf("id"),
+                        onDelete = CASCADE
                 )
         ),
         indices = arrayOf(Index("formId"))

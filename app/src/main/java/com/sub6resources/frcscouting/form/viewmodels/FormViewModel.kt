@@ -100,11 +100,6 @@ class FormViewModel : BaseViewModel() {
     }
 
     fun deleteFormResponse() {
-        fieldResponses.value?.let {
-            for(fieldResponse in it) {
-                fieldResponseDao.delete(fieldResponse)
-            }
-        }
         formResponse.value?.let {
             formResponseDao.delete(it)
         }
