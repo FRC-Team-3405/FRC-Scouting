@@ -47,4 +47,7 @@ interface ChoiceDao {
     @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
     fun getChoiceForField(fieldId: Long): LiveData<List<Choice>>
 
+    @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
+    fun getChoicesForField(fieldId: Long): List<Choice>
+
 }

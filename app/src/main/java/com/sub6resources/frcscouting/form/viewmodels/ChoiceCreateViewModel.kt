@@ -65,7 +65,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
 
     fun createField(_formId: Long) {
         val f = Field().apply {
-            type = FieldType.MUILTICHOICE
+            type = FieldType.MULTICHOICE
             formId = _formId
         }
 
@@ -74,7 +74,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
 
     fun setFieldMultipleChoice() {
         field.value?.apply {
-            type = FieldType.MUILTICHOICE
+            type = FieldType.MULTICHOICE
         }
     }
 
@@ -96,7 +96,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
         }
     }
 
-    fun saveQuestion(_fieldText: String) {
+    fun saveField(_fieldText: String) {
         field.value?.let {
             if(_fieldText != "") {
                 it.fieldText = _fieldText

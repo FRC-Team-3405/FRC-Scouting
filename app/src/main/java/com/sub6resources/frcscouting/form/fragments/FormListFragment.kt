@@ -8,9 +8,11 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
 import com.sub6resources.frcscouting.R
+import com.sub6resources.frcscouting.form.FormActivity
 import com.sub6resources.frcscouting.form.FormCreateActivity
 import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormListViewModel
+import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.frcscouting.form.views.FormListPagerAdapter
 import com.sub6resources.frcscouting.form.views.FormListView
 import com.sub6resources.utilities.BaseFragment
@@ -25,7 +27,7 @@ class FormListFragment : BaseFragment() {
     override val fragLayout: Int = R.layout.fragment_formlist
 
     val viewModel by getViewModel(FormListViewModel::class.java)
-    //val formViewModel by getSharedViewModel(FormViewModel::class.java)
+    val formViewModel by getSharedViewModel(FormViewModel::class.java)
     val fieldListViewModel by getSharedViewModel(FieldListViewModel::class.java)
 
     val viewPager by bind<ViewPager>(R.id.formlist_view_pager)
@@ -52,8 +54,10 @@ class FormListFragment : BaseFragment() {
                 context = context!!,
                 attributeSet = null,
                 buttonClick = {
-                    //formViewModel.selectQuiz(it)
-                    //addFragment(FormFragment())
+                    startActivity(Intent(activity, FormActivity::class.java).apply {
+                        putExtra("formId", it)
+                        putExtra("formResponseId", formViewModel.createFormResponse(it))
+                    })
                 },
 
                 onClick = {

@@ -5,6 +5,10 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import com.sub6resources.frcscouting.competition.model.Competition
 import com.sub6resources.frcscouting.form.model.*
+import com.sub6resources.frcscouting.formresponse.model.FieldResponse
+import com.sub6resources.frcscouting.formresponse.model.FieldResponseDao
+import com.sub6resources.frcscouting.formresponse.model.FormResponse
+import com.sub6resources.frcscouting.formresponse.model.FormResponseDao
 import com.sub6resources.frcscouting.scout.model.Scout
 
 /**
@@ -16,13 +20,17 @@ import com.sub6resources.frcscouting.scout.model.Scout
                 Form::class,
                 Field::class,
                 Choice::class,
-                Competition::class
+                Competition::class,
+                FormResponse::class,
+                FieldResponse::class
         ),
-        version = 1
+        version = 2
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract val choiceDao: ChoiceDao
     abstract val formDao: FormDao
     abstract val fieldDao: FieldDao
+    abstract val formResponseDao: FormResponseDao
+    abstract val fieldResponseDao: FieldResponseDao
 }
