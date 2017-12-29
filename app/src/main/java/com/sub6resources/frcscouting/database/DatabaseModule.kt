@@ -18,5 +18,7 @@ class DatabaseModule: AndroidModule() {
         provide { db.choiceDao }
         provide { db.formDao }
         provide { db.fieldDao }
+        provide { db.formResponseDao }
+        provide { db.fieldResponseDao }
     }
 }

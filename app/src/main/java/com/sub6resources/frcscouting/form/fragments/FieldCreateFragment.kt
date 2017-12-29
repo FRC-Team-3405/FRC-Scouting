@@ -49,7 +49,7 @@ class FieldCreateFragment : BaseFragment() {
 
                 fieldType.setSelection(
                         when (viewModel.field.value?.type) {
-                            FieldType.MUILTICHOICE -> 0
+                            FieldType.MULTICHOICE -> 0
                             FieldType.TRUEFALSE -> 1
                             FieldType.BLANK -> 2
                             FieldType.IMAGE -> 3
@@ -73,7 +73,7 @@ class FieldCreateFragment : BaseFragment() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, selectedItemIndex: Int, p3: Long) {
                 when (selectedItemIndex) {
                     0 -> { //Multiple Choice
-                        if (viewModel.field.value?.type != FieldType.MUILTICHOICE) {
+                        if (viewModel.field.value?.type != FieldType.MULTICHOICE) {
                             choiceAdapter.removeAll()
                             add_choice_fab.show()
                         }
@@ -118,9 +118,9 @@ class FieldCreateFragment : BaseFragment() {
 
         saveQuestion.onClick {
             if (questionText.length() > 0) {
-                viewModel.saveQuestion(questionText.getString())
+                viewModel.saveField(questionText.getString())
             } else {
-                viewModel.saveQuestion("[Question]")
+                viewModel.saveField("[Question]")
             }
             viewModel.createChoices(choiceAdapter.dataSet)
             popFragment()

@@ -11,7 +11,7 @@ import android.arch.persistence.room.*
 enum class FieldType {
     TRUEFALSE,
     BLANK,
-    MUILTICHOICE,
+    MULTICHOICE,
     IMAGE
 }
 

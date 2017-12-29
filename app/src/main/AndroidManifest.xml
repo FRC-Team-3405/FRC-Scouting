@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".form.FormCreateActivity" />
+        <activity android:name=".form.FormActivity" />
 
     </application>
 </manifest>
