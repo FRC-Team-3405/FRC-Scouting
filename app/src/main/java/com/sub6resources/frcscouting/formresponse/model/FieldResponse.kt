@@ -23,7 +23,7 @@ import com.sub6resources.frcscouting.form.model.Field
                         onDelete = CASCADE
                 )
         ),
-        indices = arrayOf(Index("formResponseId"))
+        indices = arrayOf(Index("formResponseId"), Index("fieldId"))
 )
 class FieldResponse {
     @PrimaryKey(autoGenerate = true)

@@ -61,13 +61,16 @@ class FormViewModel : BaseViewModel() {
 
     }
 
-    fun appendToAnswer(field: Field, additionalAnswer: String) {
+    fun appendToAnswer(field: Field, additionalAnswer: String): Int {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
+            var numImages = 0
             correspondingFieldResponse.apply {
                 response += ","+additionalAnswer
+                numImages = response.split(",").size
             }
             fieldResponseDao.update(correspondingFieldResponse)
+            return numImages
         } else {
             formResponseId.value?.let { formRId ->
                 fieldResponseDao.create(FieldResponse().apply {
@@ -76,6 +79,7 @@ class FormViewModel : BaseViewModel() {
                     response = additionalAnswer
                 })
             }
+            return 1
         }
     }
 

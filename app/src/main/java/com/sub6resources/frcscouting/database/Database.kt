@@ -24,7 +24,7 @@ import com.sub6resources.frcscouting.scout.model.Scout
                 FormResponse::class,
                 FieldResponse::class
         ),
-        version = 2
+        version = 3
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

@@ -26,7 +26,6 @@ class FormFragment: BaseFragment() {
     override val fragLayout = R.layout.fragment_form
 
     val viewModel by getSharedViewModel(FormViewModel::class.java)
-    val toolbar by bind<Toolbar>(R.id.quiz_toolbar)
     val formRecycler by bind<RecyclerView>(R.id.form_recycler)
 
     override fun onDestroy() {
@@ -50,9 +49,8 @@ class FormFragment: BaseFragment() {
                             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
                             val byteArrayImage = baos.toByteArray()
                             val encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
-                            //Get current answer
-                            viewModel.appendToAnswer(field, encodedImage)
-                            callback(imageBitmap)
+                            //Callback the bitmap and the number of images.
+                            callback(imageBitmap, viewModel.appendToAnswer(field, encodedImage))
                         }
                     }
                 }
@@ -86,14 +84,14 @@ class FormFragment: BaseFragment() {
         }
 
         observeNotNull(viewModel.form) {
-            toolbar.title = it.name
+            quiz_toolbar.title = it.name
         }
 
         observeNotNull(viewModel.fields) {
             formAdapter.replaceData(it)
         }
 
-        //Just happily observing so values aren't null.
+        //😢
         observeNotNull(viewModel.fieldResponses) {}
         observeNotNull(viewModel.formResponse) {}
 

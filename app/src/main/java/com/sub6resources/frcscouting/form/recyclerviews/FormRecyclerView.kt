@@ -14,7 +14,7 @@ import com.sub6resources.utilities.*
 /**
  * Created by whitaker on 12/28/17.
  */
-class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val selectImages: (field: Field, callback: (data: Bitmap) -> Unit) -> Unit): BaseRecyclerViewHolder<Field>(v) {
+class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit): BaseRecyclerViewHolder<Field>(v) {
 
     val questionText by bind<TextView>(R.id.field_take_text)
     val answerEditText by bind<EditText>(R.id.field_take_answer)
@@ -54,11 +54,12 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
                 answerImageContainer.show()
                 answerImageText.text = "0 images selected"
                 answerImageSelectButton.onClick {
-                    selectImages(data) {
+                    selectImages(data) { bitmap, count ->
                         answerImages.addView(ImageView(answerImages.context).apply {
-                            setImageBitmap(it)
+                            setImageBitmap(bitmap)
                             setPadding(8, 8, 8, 8)
                         })
+                        answerImageText.text = answerImageText.context.getPlural(R.plurals.images_selected, count)
                     }
                 }
             }
@@ -66,7 +67,7 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
     }
 }
 
-class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, selectImages: (field: Field, callback: (data: Bitmap) -> Unit) -> Unit):
+class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit):
         BaseRecyclerViewAdapter<Field>(fields.toMutableList(), R.layout.item_field_take, {
             FormRecyclerViewHolder(it, getChoicesForField, setAnswer, selectImages)
         })
