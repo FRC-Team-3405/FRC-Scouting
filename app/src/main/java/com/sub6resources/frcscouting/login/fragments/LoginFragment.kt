@@ -1,10 +1,12 @@
 package com.sub6resources.frcscouting.login.fragments
 
+import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
-import com.sub6resources.frcscouting.form.fragments.FormListFragment
 import com.sub6resources.frcscouting.login.LoginFailure
 import com.sub6resources.frcscouting.login.LoginSuccess
 import com.sub6resources.frcscouting.login.User
@@ -27,7 +29,7 @@ class LoginFragment: BaseFragment() {
             activity!!.sharedPreferences.edit {
                 putString("currentUser", it.username)
 
-                switchFragment(FormListFragment())
+                startActivity(Intent(baseActivity, MainActivity::class.java))
             }.apply()
         })
     }
@@ -60,13 +62,13 @@ class LoginFragment: BaseFragment() {
             }
 
             //If user is already signed in, don't try and sign in again.
-            if(baseActivity.sharedPreferences.getString("users", "").contains(username)) {
+            /*if(baseActivity.sharedPreferences.getString("users", "").contains(username)) {
                 baseActivity.sharedPreferences.edit {
                     putString("currentUser", username)
                 }.apply()
-                switchFragment(FormListFragment())
+                startActivity(Intent(baseActivity, MainActivity::class.java))
                 return@onClick
-            }
+            }*/
 
             if(password.isBlank()) {
                 edittext_password.error = "Please enter your password"
@@ -80,13 +82,41 @@ class LoginFragment: BaseFragment() {
             }
             loadingDialog.show()
 
-            viewModel.signIn(username, password) { result ->
+            viewModel.signIn(username, password).observe(this, Observer { loginResponse ->
+                loadingDialog.dismiss()
+                when(loginResponse) {
+                    is LoginSuccess -> {
+                        val listOfUsers = baseActivity.sharedPreferences.getString("users", "")
+                        //Save user to list of signed in users
+                        baseActivity.sharedPreferences.edit {
+                            if(listOfUsers.isEmpty()) {
+                                putString("users", username)
+                            } else if(!listOfUsers.contains(username)) {
+                                putString("users", listOfUsers+","+username)
+                            }
+
+                            //Save this user's token
+                            putString(loginResponse.username, loginResponse.token)
+
+                            //Set this user as the current user
+                            putString("currentUser", loginResponse.username)
+                        }.apply()
+
+                        startActivity(Intent(baseActivity, MainActivity::class.java))
+                    }
+                    is LoginFailure -> {
+                        //Display error message
+                        edittext_password.error = loginResponse.error
+                    }
+                }
+            })
+            /*viewModel.signIn(username, password) { result ->
                 loadingDialog.dismiss()
                 when(result) {
                     is LoginSuccess -> {
-                        val listOfUsers = activity!!.sharedPreferences.getString("users", "")
+                        val listOfUsers = baseActivity.sharedPreferences.getString("users", "")
                         //Save user to list of signed in users
-                        activity!!.sharedPreferences.edit {
+                        baseActivity.sharedPreferences.edit {
                             if(listOfUsers.isEmpty()) {
                                 putString("users", username)
                             } else if(!listOfUsers.contains(username)) {
@@ -100,14 +130,14 @@ class LoginFragment: BaseFragment() {
                             putString("currentUser", result.username)
                         }.apply()
 
-                        switchFragment(FormListFragment())
+                        startActivity(Intent(baseActivity, MainActivity::class.java))
                     }
                     is LoginFailure -> {
                         //Display error message
                         edittext_password.error = result.error
                     }
                 }
-            }
+            }*/
         }
     }
 }

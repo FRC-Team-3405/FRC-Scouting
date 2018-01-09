@@ -7,7 +7,7 @@ import org.koin.android.ext.android.startKoin
 
 class App : Application() {
     override fun onCreate() {
-        startKoin(this, listOf(DatabaseModule()))
+        startKoin(this, listOf(AppModule(), DatabaseModule()))
         super.onCreate()
     }
 }

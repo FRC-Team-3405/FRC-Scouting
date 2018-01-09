@@ -1,9 +1,12 @@
 package com.sub6resources.frcscouting.login.viewmodels
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.sub6resources.frcscouting.login.*
 import com.sub6resources.utilities.BaseViewModel
+import org.koin.standalone.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,27 +16,15 @@ import retrofit2.Response
  */
 class LoginViewModel: BaseViewModel() {
 
-    fun signIn(username: String, password: String, onResult: (success: LoginResult) -> Unit) {
-        LoginApi().api.signIn(Login(username, password)).enqueue(object: Callback<JsonObject> {
-            override fun onFailure(call: Call<JsonObject>?, t: Throwable?) {
-                onResult(LoginFailure(t?.message ?: "Unknown Error"))
-            }
+    val loginRepository: LoginRepository by inject<LoginRepository>()
 
-            override fun onResponse(call: Call<JsonObject>?, response: Response<JsonObject>?) {
-                if (response?.isSuccessful == true) {
-                    response.body().let { body ->
-                        if(body!!.has("token")){
-                            val token = body.get("token").asString
-                            onResult(LoginSuccess(username, token))
-                        }
-                    }
-                } else {
-                    response?.errorBody()?.let { errorBody ->
-                        val error = Gson().fromJson(errorBody.string(), LoginError::class.java)
-                        onResult(LoginFailure(error.non_field_errors[0]))
-                    }
-                }
-            }
-        })
+    fun signIn(username: String, password: String): LiveData<LoginResult> {
+        val mediatorLiveData = MediatorLiveData<LoginResult>()
+        mediatorLiveData.addSource(
+                loginRepository.signIn(Login(username, password)),
+                {mediatorLiveData.value = it}
+        )
+
+        return mediatorLiveData
     }
 }

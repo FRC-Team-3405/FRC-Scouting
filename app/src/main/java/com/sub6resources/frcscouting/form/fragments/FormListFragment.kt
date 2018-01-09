@@ -16,6 +16,7 @@ import com.sub6resources.frcscouting.form.viewmodels.FormListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.frcscouting.form.views.FormListPagerAdapter
 import com.sub6resources.frcscouting.form.views.FormListView
+import com.sub6resources.frcscouting.login.LoginActivity
 import com.sub6resources.frcscouting.login.fragments.LoginFragment
 import com.sub6resources.utilities.BaseFragment
 import com.sub6resources.utilities.bind
@@ -113,7 +114,7 @@ class FormListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.switch_user -> {
-                switchFragment(LoginFragment())
+                startActivity(Intent(baseActivity, LoginActivity::class.java))
                 return true
             }
         }
