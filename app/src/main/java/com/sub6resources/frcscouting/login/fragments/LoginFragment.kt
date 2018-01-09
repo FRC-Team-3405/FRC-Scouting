@@ -62,13 +62,13 @@ class LoginFragment: BaseFragment() {
             }
 
             //If user is already signed in, don't try and sign in again.
-            /*if(baseActivity.sharedPreferences.getString("users", "").contains(username)) {
+            if(baseActivity.sharedPreferences.getString("users", "").contains(username)) {
                 baseActivity.sharedPreferences.edit {
                     putString("currentUser", username)
                 }.apply()
                 startActivity(Intent(baseActivity, MainActivity::class.java))
                 return@onClick
-            }*/
+            }
 
             if(password.isBlank()) {
                 edittext_password.error = "Please enter your password"
@@ -110,34 +110,6 @@ class LoginFragment: BaseFragment() {
                     }
                 }
             })
-            /*viewModel.signIn(username, password) { result ->
-                loadingDialog.dismiss()
-                when(result) {
-                    is LoginSuccess -> {
-                        val listOfUsers = baseActivity.sharedPreferences.getString("users", "")
-                        //Save user to list of signed in users
-                        baseActivity.sharedPreferences.edit {
-                            if(listOfUsers.isEmpty()) {
-                                putString("users", username)
-                            } else if(!listOfUsers.contains(username)) {
-                                putString("users", listOfUsers+","+username)
-                            }
-
-                            //Save this user's token
-                            putString(result.username, result.token)
-
-                            //Set this user as the current user
-                            putString("currentUser", result.username)
-                        }.apply()
-
-                        startActivity(Intent(baseActivity, MainActivity::class.java))
-                    }
-                    is LoginFailure -> {
-                        //Display error message
-                        edittext_password.error = result.error
-                    }
-                }
-            }*/
         }
     }
 }
