@@ -96,17 +96,22 @@ class LoginFragment: BaseFragment() {
                             }
 
                             //Save this user's token
-                            putString(loginResponse.username, loginResponse.token)
+                            putString(loginResponse.user.username, loginResponse.user.token)
 
                             //Set this user as the current user
-                            putString("currentUser", loginResponse.username)
+                            putString("currentUser", loginResponse.user.username)
                         }.apply()
 
                         startActivity(Intent(baseActivity, MainActivity::class.java))
                     }
                     is LoginFailure -> {
                         //Display error message
-                        edittext_password.error = loginResponse.error
+                        if(loginResponse.error == "HTTP 400 Bad Request")
+                            edittext_password.error = "Username or password is incorrect."
+                        else if(loginResponse.error.contains("Unable to resolve host"))
+                            edittext_password.error = "Connection is unavailable. Please use an existing user."
+                        else
+                            edittext_password.error = loginResponse.error
                     }
                 }
             })
