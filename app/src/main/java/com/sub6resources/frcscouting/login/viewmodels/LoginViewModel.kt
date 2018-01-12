@@ -16,7 +16,7 @@ import retrofit2.Response
  */
 class LoginViewModel: BaseViewModel() {
 
-    val loginRepository: LoginRepository by inject<LoginRepository>()
+    val loginRepository by inject<LoginRepository>()
 
     fun signIn(username: String, password: String): LiveData<LoginResult> {
         return loginRepository.signIn(Login(username, password))
