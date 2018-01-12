@@ -9,11 +9,12 @@ import com.sub6resources.utilities.BaseRecyclerViewAdapter
 import com.sub6resources.utilities.BaseRecyclerViewHolder
 import com.sub6resources.utilities.bind
 import com.sub6resources.utilities.onClick
+import java.util.*
 
 /**
  * Created by whitaker on 12/26/17.
  */
-class FormListRecyclerViewHolder(v: View, val takeForm: (id: Long) -> Unit, val onClick: (id: Long) -> Unit): BaseRecyclerViewHolder<Form>(v) {
+class FormListRecyclerViewHolder(v: View, val takeForm: (id: UUID) -> Unit, val onClick: (id: Long) -> Unit): BaseRecyclerViewHolder<Form>(v) {
 
     val name by bind<TextView>(R.id.recycler_form_name)
     val take_form by bind<Button>(R.id.recycler_take_form)
@@ -31,7 +32,7 @@ class FormListRecyclerViewHolder(v: View, val takeForm: (id: Long) -> Unit, val 
     }
 }
 
-class FormListRecyclerAdapter(forms: List<Form>, val takeForm: (id: Long) -> Unit, val onClick: (id: Long) -> Unit):
+class FormListRecyclerAdapter(forms: List<Form>, val takeForm: (id: UUID) -> Unit, val onClick: (id: Long) -> Unit):
         BaseRecyclerViewAdapter<Form>(forms.toMutableList(), R.layout.item_form, {
             FormListRecyclerViewHolder(it, takeForm, onClick)
         })

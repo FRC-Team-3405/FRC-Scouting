@@ -19,12 +19,6 @@ class LoginViewModel: BaseViewModel() {
     val loginRepository: LoginRepository by inject<LoginRepository>()
 
     fun signIn(username: String, password: String): LiveData<LoginResult> {
-        val mediatorLiveData = MediatorLiveData<LoginResult>()
-        mediatorLiveData.addSource(
-                loginRepository.signIn(Login(username, password)),
-                {mediatorLiveData.value = it}
-        )
-
-        return mediatorLiveData
+        return loginRepository.signIn(Login(username, password))
     }
 }

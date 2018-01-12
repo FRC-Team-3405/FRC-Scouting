@@ -27,4 +27,6 @@ val databaseModule: Module = applicationContext {
     provide { db.fieldDao }
     provide { db.formResponseDao }
     provide { db.fieldResponseDao }
+    provide { db.userDao }
+    provide { db.imageDao }
 }

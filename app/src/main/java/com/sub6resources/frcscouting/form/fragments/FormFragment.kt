@@ -7,16 +7,15 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Base64
 import android.view.View
-import android.support.v7.widget.Toolbar
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.recyclerviews.FormRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.utilities.*
 import kotlinx.android.synthetic.main.fragment_form.*
-import android.util.Base64
-import android.util.Log
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 
 /**
@@ -78,8 +77,8 @@ class FormFragment: BaseFragment() {
 
         activity?.let {
             it.intent?.let {
-                viewModel.selectForm(it.getLongExtra("formId", 0))
-                viewModel.selectFormResponse(it.getLongExtra("formResponseId", 0))
+                viewModel.selectForm(it.extras["formId"] as UUID)
+                viewModel.selectFormResponse(it.extras["formResponseId"] as UUID)
             }
         }
 
@@ -97,7 +96,9 @@ class FormFragment: BaseFragment() {
 
         button_submit.onClick {
             if(viewModel.validateFormCompleted()) {
-                activity!!.finish()
+                baseActivity.finish()
+            } else {
+                //Form is invalid TODO show an error message
             }
         }
     }

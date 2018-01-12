@@ -6,6 +6,7 @@ import android.arch.lifecycle.Transformations
 import com.sub6resources.frcscouting.form.model.*
 import com.sub6resources.utilities.BaseViewModel
 import org.koin.standalone.inject
+import java.util.*
 
 /**
  * Created by ryanberger on 12/3/17.
@@ -16,7 +17,7 @@ class ChoiceCreateViewModel : BaseViewModel() {
     val choiceDao by inject<ChoiceDao>()
     val fieldDao by inject<FieldDao>()
 
-    val fieldId = MutableLiveData<Long>()
+    val fieldId = MutableLiveData<UUID>()
     val field = Transformations.switchMap(fieldId) { id -> fieldDao.get(id) }
     val choices: LiveData<List<Choice>> = Transformations.switchMap(field, {
         MutableLiveData<List<Choice>>()
@@ -39,10 +40,10 @@ class ChoiceCreateViewModel : BaseViewModel() {
         val c = Choice().apply {
             choiceText = ""
             field.value?.let {
-                fieldId = field.value?.id as Long
+                fieldId = field.value?.id as UUID
             }
+            id = UUID.randomUUID()
         }
-        c.id = choiceDao.create(c)
         choiceDao.update(c)
     }
 
@@ -50,8 +51,9 @@ class ChoiceCreateViewModel : BaseViewModel() {
         choiceDao.createAll(choices.map { choice ->
             choice.apply {
                 field.value?.let {
-                    fieldId = field.value?.id as Long
+                    fieldId = field.value?.id as UUID
                 }
+                id = UUID.randomUUID()
             }
         })
     }
@@ -63,13 +65,14 @@ class ChoiceCreateViewModel : BaseViewModel() {
         choiceDao.update(choice)
     }
 
-    fun createField(_formId: Long) {
+    fun createField(_formId: UUID) {
         val f = Field().apply {
             type = FieldType.MULTICHOICE
             formId = _formId
+            id = UUID.randomUUID()
         }
-
-        fieldId.value = fieldDao.create(f)
+        fieldDao.create(f)
+        fieldId.value = f.id
     }
 
     fun setFieldMultipleChoice() {

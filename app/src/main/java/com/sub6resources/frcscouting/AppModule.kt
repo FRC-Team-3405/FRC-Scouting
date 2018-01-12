@@ -1,5 +1,6 @@
 package com.sub6resources.frcscouting
 
+import com.sub6resources.frcscouting.database.databaseModule
 import com.sub6resources.frcscouting.login.LoginApi
 import com.sub6resources.frcscouting.login.LoginRepository
 import okhttp3.OkHttpClient
@@ -24,4 +25,5 @@ val loginApi by lazy {
 
 val appModule: Module = applicationContext {
     provide { LoginRepository(loginApi) }
+    provide { databaseModule }
 }

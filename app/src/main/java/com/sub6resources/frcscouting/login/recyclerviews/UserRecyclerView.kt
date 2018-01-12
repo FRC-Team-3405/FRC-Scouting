@@ -4,7 +4,7 @@ import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.TextView
 import com.sub6resources.frcscouting.R
-import com.sub6resources.frcscouting.login.User
+import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.utilities.BaseRecyclerViewAdapter
 import com.sub6resources.utilities.BaseRecyclerViewHolder
 import com.sub6resources.utilities.bind

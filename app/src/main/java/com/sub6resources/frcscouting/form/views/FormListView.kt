@@ -11,13 +11,14 @@ import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.model.Form
 import com.sub6resources.frcscouting.form.recyclerviews.FormListRecyclerAdapter
 import com.sub6resources.utilities.bind
+import java.util.UUID
 
 /**
  * Created by whitaker on 12/26/17.
  */
 class FormListView @JvmOverloads constructor(context: Context,
                                              attributeSet: AttributeSet? = null,
-                                             buttonClick: (id: Long) -> Unit,
+                                             buttonClick: (id: UUID) -> Unit,
                                              onClick: (id: Long) -> Unit) : LinearLayout(context, attributeSet) {
 
     val formAdapter by lazy {

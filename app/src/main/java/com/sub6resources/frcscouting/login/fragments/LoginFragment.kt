@@ -9,7 +9,7 @@ import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.login.LoginFailure
 import com.sub6resources.frcscouting.login.LoginSuccess
-import com.sub6resources.frcscouting.login.User
+import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.recyclerviews.UserRecyclerAdapter
 import com.sub6resources.frcscouting.login.viewmodels.LoginViewModel
 import com.sub6resources.utilities.*
@@ -86,18 +86,7 @@ class LoginFragment: BaseFragment() {
                 loadingDialog.dismiss()
                 when(loginResponse) {
                     is LoginSuccess -> {
-                        val listOfUsers = baseActivity.sharedPreferences.getString("users", "")
-                        //Save user to list of signed in users
                         baseActivity.sharedPreferences.edit {
-                            if(listOfUsers.isEmpty()) {
-                                putString("users", username)
-                            } else if(!listOfUsers.contains(username)) {
-                                putString("users", listOfUsers+","+username)
-                            }
-
-                            //Save this user's token
-                            putString(loginResponse.user.username, loginResponse.user.token)
-
                             //Set this user as the current user
                             putString("currentUser", loginResponse.user.username)
                         }.apply()

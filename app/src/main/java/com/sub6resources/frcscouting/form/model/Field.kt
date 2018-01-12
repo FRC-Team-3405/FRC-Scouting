@@ -2,6 +2,7 @@ package com.sub6resources.frcscouting.form.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import java.util.*
 
 /*
  * Created by Matthew Whitaker on 11/22/2017.
@@ -27,11 +28,11 @@ enum class FieldType {
         indices = arrayOf(Index("formId"))
 )
 class Field {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    @PrimaryKey()
+    lateinit var id: UUID
 
     var fieldText: String = ""
-    var formId: Long = 0
+    lateinit var formId: UUID
 
     lateinit var type: FieldType
 }
@@ -39,7 +40,7 @@ class Field {
 @Dao
 interface FieldDao {
     @Insert
-    fun create(field: Field): Long
+    fun create(field: Field)
 
     @Update
     fun update(field: Field)
@@ -52,10 +53,8 @@ interface FieldDao {
             SELECT * FROM Field WHERE formId = :arg0
             """
     )
-    fun getFieldsForForm(formId: Long): LiveData<List<Field>>
+    fun getFieldsForForm(formId: UUID): LiveData<List<Field>>
 
     @Query("SELECT * FROM Field WHERE id = :arg0")
-    fun get(fieldId: Long): LiveData<Field>
-
-
+    fun get(fieldId: UUID): LiveData<Field>
 }
