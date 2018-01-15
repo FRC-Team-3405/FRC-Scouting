@@ -48,5 +48,8 @@ interface ImageDao {
     fun get(imageId: UUID): LiveData<Image>
 
     @Query("SELECT * FROM Image WHERE fieldResponseId = :arg0")
-    fun getByFieldResponse(fieldResponseId: UUID): LiveData<List<Image>>
+    fun getByFieldResponse(fieldResponseId: UUID): List<Image>
+
+    @Query("SELECT COUNT(Image.fieldResponseId) FROM Image WHERE Image.fieldResponseId = :arg0")
+    fun getNumberOfImages(fieldResponseId:UUID): Int
 }

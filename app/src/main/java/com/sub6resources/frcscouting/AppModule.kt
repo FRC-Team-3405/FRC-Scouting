@@ -14,16 +14,20 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Created by whitaker on 1/6/18.
  */
-val loginApi by lazy {
-    Retrofit.Builder().apply {
+
+val appModule: Module = applicationContext {
+    val retrofit = Retrofit.Builder().apply {
         baseUrl("http://watch.ryanberger.me")
         client(OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }).build())
         addConverterFactory(GsonConverterFactory.create())
         addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-    }.build().create(LoginApi::class.java)
+    }.build()
+
+    provide { LoginRepository(get(), get()) }
+    provide { getLoginApi(retrofit) }
 }
 
-val appModule: Module = applicationContext {
-    provide { LoginRepository(loginApi, get()) }
-    provide { databaseModule }
+fun getLoginApi(retrofit: Retrofit): LoginApi {
+    return retrofit.create(LoginApi::class.java)
 }
+

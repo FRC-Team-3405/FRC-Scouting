@@ -75,18 +75,8 @@ class FormViewModel : BaseViewModel() {
     fun appendToAnswer(field: Field, additionalAnswer: String): Int {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
-            var numImages = 0
-            correspondingFieldResponse.apply {
-                val updatedChoice = choiceDao.get(choice).apply {
-                    choiceText += ","
-                }
-                choiceDao.update(updatedChoice)
-                imageDao.create(Image(UUID.randomUUID(), additionalAnswer, correspondingFieldResponse.id))
-                choice = updatedChoice.id
-                numImages = updatedChoice.choiceText.split(",").size
-            }
-            fieldResponseDao.update(correspondingFieldResponse)
-            return numImages
+            imageDao.create(Image(UUID.randomUUID(), additionalAnswer, correspondingFieldResponse.id))
+            return imageDao.getNumberOfImages(getFieldResponseOfField(field)?.id!!)
         } else {
             formResponseId.value?.let { formRId ->
                 val newFieldResponse = FieldResponse().apply {
@@ -157,9 +147,13 @@ class FormViewModel : BaseViewModel() {
         return false
     }
 
-    fun getImages(field: Field): LiveData<List<Image>> {
+    fun getImages(field: Field): List<Image> {
         val id = getFieldResponseOfField(field)?.id
         return imageDao.getByFieldResponse(id!!)
+    }
+
+    fun getNumberOfImages(field: Field): Int {
+        return imageDao.getNumberOfImages(getFieldResponseOfField(field)?.id!!)
     }
 
 }
