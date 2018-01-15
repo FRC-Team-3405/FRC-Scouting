@@ -40,40 +40,14 @@ class LoginFragment: BaseFragment() {
         recycler_existing_users.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recycler_existing_users.adapter = userAdapter
 
-        //Get existing offline users
-        val users = ArrayList<User>()
-        activity!!.sharedPreferences.getString("users", "").split(",").forEach { username ->
-            val token = activity!!.sharedPreferences.getString(username, "")
-            if(username.isNotEmpty() && token.isNotEmpty()) {
-                users.add(User(username, token))
-            }
+        observeNotNull(viewModel.getOfflineUsers()) {
+            userAdapter.replaceData(it)
         }
-        userAdapter.replaceData(users)
-
 
         button_signin.onClick {
 
             val username = edittext_username.text.toString()
             val password = edittext_password.text.toString()
-
-            if(username.isBlank()) {
-                edittext_username.error = "Please enter your username"
-                return@onClick
-            }
-
-            //If user is already signed in, don't try and sign in again.
-            if(baseActivity.sharedPreferences.getString("users", "").contains(username)) {
-                baseActivity.sharedPreferences.edit {
-                    putString("currentUser", username)
-                }.apply()
-                startActivity(Intent(baseActivity, MainActivity::class.java))
-                return@onClick
-            }
-
-            if(password.isBlank()) {
-                edittext_password.error = "Please enter your password"
-                return@onClick
-            }
 
             val loadingDialog = activity!!.dialog {
                 title("Signing In...")
@@ -83,24 +57,24 @@ class LoginFragment: BaseFragment() {
             loadingDialog.show()
 
             viewModel.signIn(username, password).observe(this, Observer { loginResponse ->
-                loadingDialog.dismiss()
                 when(loginResponse) {
                     is LoginSuccess -> {
+                        loadingDialog.dismiss()
                         baseActivity.sharedPreferences.edit {
                             //Set this user as the current user
                             putString("currentUser", loginResponse.user.username)
                         }.apply()
-
                         startActivity(Intent(baseActivity, MainActivity::class.java))
                     }
                     is LoginFailure -> {
                         //Display error message
-                        if(loginResponse.error == "HTTP 400 Bad Request")
-                            edittext_password.error = "Username or password is incorrect."
-                        else if(loginResponse.error.contains("Unable to resolve host"))
-                            edittext_password.error = "Connection is unavailable. Please use an existing user."
-                        else
-                            edittext_password.error = loginResponse.error
+                        when {
+                            loginResponse.error == "HTTP 400 Bad Request" -> edittext_password.error = "Username or password is incorrect."
+                            loginResponse.error.contains("Unable to resolve host") -> edittext_password.error = "Connection is unavailable. Please use an existing user."
+                            loginResponse.error == "UserDoesNotExistInLocalDatabase" -> return@Observer //Ignore this error.
+                            else -> edittext_password.error = loginResponse.error
+                        }
+                        loadingDialog.dismiss()
                     }
                 }
             })

@@ -24,6 +24,6 @@ val loginApi by lazy {
 }
 
 val appModule: Module = applicationContext {
-    provide { LoginRepository(loginApi) }
+    provide { LoginRepository(loginApi, get()) }
     provide { databaseModule }
 }

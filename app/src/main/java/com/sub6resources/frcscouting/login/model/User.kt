@@ -34,5 +34,8 @@ interface UserDao {
     fun delete(user: User)
 
     @Query("SELECT * FROM User WHERE username = :arg0")
-    fun signIn(username: String): LiveData<User>
+    fun signIn(username: String): User
+
+    @Query("SELECT * FROM User")
+    fun getUsers(): LiveData<List<User>>
 }

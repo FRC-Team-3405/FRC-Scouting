@@ -48,5 +48,5 @@ interface ImageDao {
     fun get(imageId: UUID): LiveData<Image>
 
     @Query("SELECT * FROM Image WHERE fieldResponseId = :arg0")
-    fun getByFieldResponse(fieldResponseId: UUID): List<Image>
+    fun getByFieldResponse(fieldResponseId: UUID): LiveData<List<Image>>
 }

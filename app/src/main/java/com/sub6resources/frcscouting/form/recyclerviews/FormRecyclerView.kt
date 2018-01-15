@@ -10,11 +10,12 @@ import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.model.FieldType
 import com.sub6resources.frcscouting.form.model.Choice
 import com.sub6resources.utilities.*
+import java.util.*
 
 /**
  * Created by whitaker on 12/28/17.
  */
-class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit): BaseRecyclerViewHolder<Field>(v) {
+class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> List<Choice>, val setAnswer: (field: Field, answer: String) -> Unit, val getAnswer: (field: Field) -> Choice?, val getExistingImages: (field: Field, callback: (bitmaps: List<Bitmap>) -> Unit) -> Unit, val selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit): BaseRecyclerViewHolder<Field>(v) {
 
     val questionText by bind<TextView>(R.id.field_take_text)
     val answerEditText by bind<EditText>(R.id.field_take_answer)
@@ -34,6 +35,10 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
         when(data.type) {
             FieldType.BLANK -> {
                 answerEditText.show()
+                getAnswer(data)?.let {
+                    answerEditText.setText(it.choiceText)
+                    setAnswer(data, it.choiceText)
+                }
                 RxTextView.afterTextChangeEvents(answerEditText).subscribe {
                     setAnswer(data, it.editable().toString())
                 }
@@ -41,33 +46,54 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
             FieldType.TRUEFALSE, FieldType.MULTICHOICE -> {
                 answerChoices.show()
                 val choices = getChoicesForField(data)
-                choices.forEach {
+                choices.forEach { choice ->
                     answerChoices.addView(RadioButton(answerChoices.context).apply {
-                        text = it.choiceText
+                        text = choice.choiceText
                         onClick {
+                            answerChoices.clearCheck()
+                            this.isChecked = true
                             setAnswer(data, (it as RadioButton).text.toString())
                         }
                     })
+                }
+                choices.forEachIndexed { i, choice ->
+                    if(getAnswer(data)?.choiceText == choice.choiceText) {
+                        answerChoices.check(i)
+                        (answerChoices.getChildAt(i) as RadioButton).isChecked = true
+                        setAnswer(data, choice.choiceText)
+                    }
                 }
             }
             FieldType.IMAGE -> {
                 answerImageContainer.show()
                 answerImageText.text = "0 images selected"
+                getAnswer(data)?.let {
+                    answerImageText.text = answerImageText.context.getPlural(R.plurals.images_selected, it.choiceText.split(",").size)
+                    getExistingImages(data) {
+                        it.forEach { bitmap ->
+                            addImage(bitmap)
+                        }
+                    }
+                }
                 answerImageSelectButton.onClick {
                     selectImages(data) { bitmap, count ->
-                        answerImages.addView(ImageView(answerImages.context).apply {
-                            setImageBitmap(bitmap)
-                            setPadding(8, 8, 8, 8)
-                        })
+                        addImage(bitmap)
                         answerImageText.text = answerImageText.context.getPlural(R.plurals.images_selected, count)
                     }
                 }
             }
         }
     }
+
+    private fun addImage(bitmap: Bitmap) {
+        answerImages.addView(ImageView(answerImages.context).apply {
+            setImageBitmap(bitmap)
+            setPadding(8, 8, 8, 8)
+        })
+    }
 }
 
-class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit):
+class FormRecyclerAdapter(fields: List<Field>, getChoicesForField: (field: Field) -> List<Choice>, setAnswer: (field: Field, answer: String) -> Unit, getAnswer: (field: Field) -> Choice?, getExistingImages: (field: Field, callback: (bitmaps: List<Bitmap>) -> Unit) -> Unit, selectImages: (field: Field, callback: (data: Bitmap, count: Int) -> Unit) -> Unit):
         BaseRecyclerViewAdapter<Field>(fields.toMutableList(), R.layout.item_field_take, {
-            FormRecyclerViewHolder(it, getChoicesForField, setAnswer, selectImages)
+            FormRecyclerViewHolder(it, getChoicesForField, setAnswer, getAnswer, getExistingImages, selectImages)
         })

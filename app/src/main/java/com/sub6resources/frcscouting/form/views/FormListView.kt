@@ -19,12 +19,14 @@ import java.util.UUID
 class FormListView @JvmOverloads constructor(context: Context,
                                              attributeSet: AttributeSet? = null,
                                              buttonClick: (id: UUID) -> Unit,
-                                             onClick: (id: Long) -> Unit) : LinearLayout(context, attributeSet) {
+                                             responseClick: (id: UUID) -> Unit,
+                                             onClick: (id: UUID) -> Unit) : LinearLayout(context, attributeSet) {
 
     val formAdapter by lazy {
         FormListRecyclerAdapter(
                 forms = listOf(),
                 takeForm = buttonClick,
+                responseClick = responseClick,
                 onClick = onClick
         )
     }

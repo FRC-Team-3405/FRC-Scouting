@@ -3,6 +3,7 @@ package com.sub6resources.frcscouting.form.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.graphics.Bitmap
 import com.sub6resources.frcscouting.form.model.*
 import com.sub6resources.frcscouting.formresponse.model.FieldResponse
 import com.sub6resources.frcscouting.formresponse.model.FieldResponseDao
@@ -42,6 +43,13 @@ class FormViewModel : BaseViewModel() {
 
     fun getChoicesForField(id: UUID): List<Choice> {
         return choiceDao.getChoicesForField(id)
+    }
+
+    fun getAnswer(field: Field): Choice? {
+        getFieldResponseOfField(field)?.let {
+            return choiceDao.get(it.choice)
+        }
+        return null
     }
 
     fun setAnswer(field: Field, answer: String) {
@@ -147,6 +155,11 @@ class FormViewModel : BaseViewModel() {
             return it.size == fields.value?.size
         }
         return false
+    }
+
+    fun getImages(field: Field): LiveData<List<Image>> {
+        val id = getFieldResponseOfField(field)?.id
+        return imageDao.getByFieldResponse(id!!)
     }
 
 }

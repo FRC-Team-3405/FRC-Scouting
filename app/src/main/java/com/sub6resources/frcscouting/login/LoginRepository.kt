@@ -4,22 +4,74 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import com.sub6resources.frcscouting.login.model.User
+import com.sub6resources.frcscouting.login.model.UserDao
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 /**
  * Created by whitaker on 1/8/18.
  */
-class LoginRepository(val loginApi: LoginApi) {
-    fun signIn(login: Login): LiveData<LoginResult> {
-        val mediatorLiveData = MediatorLiveData<LoginResult>()
-        mediatorLiveData.addSource(signInNetwork(login), {
-            if(it is LoginSuccess) {
+class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
 
+    val mediatorLiveData = MediatorLiveData<LoginResult>()
+
+    /*private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
+        LiveData<ApiResponse<RequestType>> apiResponse = createCall();
+        // we re-attach dbSource as a new source,
+        // it will dispatch its latest value quickly
+        result.addSource(dbSource,
+                newData -> result.setValue(Resource.loading(newData)));
+        result.addSource(apiResponse, response -> {
+            result.removeSource(apiResponse);
+            result.removeSource(dbSource);
+            //noinspection ConstantConditions
+            if (response.isSuccessful()) {
+                saveResultAndReInit(response);
+            } else {
+                onFetchFailed();
+                result.addSource(dbSource,
+                        newData -> result.setValue(
+                                Resource.error(response.errorMessage, newData)));
             }
-            mediatorLiveData.value = it
+        });
+    }*/
+
+    fun signIn(login: Login): LiveData<LoginResult> {
+        val dbLogin = signInDatabase(login)
+        mediatorLiveData.addSource(dbLogin, { data ->
+            mediatorLiveData.removeSource(dbLogin)
+            if(data is LoginFailure) {
+                val apiLogin = signInNetwork(login)
+                mediatorLiveData.addSource(apiLogin, {
+                    when (it) {
+                        is LoginSuccess -> {
+                            mediatorLiveData.removeSource(apiLogin)
+                            createNewUserInDatabase(it.user, login.username)
+                            mediatorLiveData.addSource(signInDatabase(login), {
+                                mediatorLiveData.value = it
+                            })
+                        }
+                        is LoginFailure -> {
+                            mediatorLiveData.value = it
+                        }
+                    }
+                })
+            } else {
+                mediatorLiveData.addSource(dbLogin, {
+                    mediatorLiveData.value = it
+                })
+            }
         })
         return mediatorLiveData
+    }
+
+    private fun createNewUserInDatabase(user: User, _username: String) {
+        user.apply {
+            username = _username
+            id = UUID.randomUUID()
+        }
+        userDao.create(user)
     }
 
     fun signInNetwork(login: Login): LiveData<LoginResult> {
@@ -32,11 +84,15 @@ class LoginRepository(val loginApi: LoginApi) {
         return liveData
     }
 
-    /*fun signInDatabase(login: Login): LiveData<LoginResult> {
-        return Transformations.switchMap(database.userDao.signIn(login.username, login.password)) { user ->
-            return@switchMap MutableLiveData<LoginResult>().apply {value = LoginSuccess(user)}
-        }
-    }*/
+    fun signInDatabase(login: Login): LiveData<LoginResult> {
+        val result = MutableLiveData<LoginResult>()
+        val user: User? = userDao.signIn(login.username)
+        if(user != null)
+            result.value = LoginSuccess(user)
+        else
+            result.value = LoginFailure("UserDoesNotExistInLocalDatabase")
+        return result
+    }
 }
 
 

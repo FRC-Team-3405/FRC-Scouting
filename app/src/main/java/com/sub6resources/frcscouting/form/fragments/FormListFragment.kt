@@ -16,6 +16,7 @@ import com.sub6resources.frcscouting.form.viewmodels.FormListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.frcscouting.form.views.FormListPagerAdapter
 import com.sub6resources.frcscouting.form.views.FormListView
+import com.sub6resources.frcscouting.formresponse.ResponseActivity
 import com.sub6resources.frcscouting.login.LoginActivity
 import com.sub6resources.frcscouting.login.fragments.LoginFragment
 import com.sub6resources.utilities.BaseFragment
@@ -47,10 +48,8 @@ class FormListFragment : BaseFragment() {
                         putExtra("formId", it)
                     })
                 },
-
-                onClick = {
-
-                }
+                responseClick = {},
+                onClick = {}
         )
     }
 
@@ -64,10 +63,12 @@ class FormListFragment : BaseFragment() {
                         putExtra("formResponseId", formViewModel.createFormResponse(it))
                     })
                 },
-
-                onClick = {
-
-                }
+                responseClick = {
+                    startActivity(Intent(baseActivity, ResponseActivity::class.java).apply {
+                        putExtra("formId", it)
+                    })
+                },
+                onClick = {}
         )
     }
 
