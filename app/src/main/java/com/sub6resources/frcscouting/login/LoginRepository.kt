@@ -16,27 +16,6 @@ class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
 
     val mediatorLiveData = MediatorLiveData<LoginResult>()
 
-    /*private void fetchFromNetwork(final LiveData<ResultType> dbSource) {
-        LiveData<ApiResponse<RequestType>> apiResponse = createCall();
-        // we re-attach dbSource as a new source,
-        // it will dispatch its latest value quickly
-        result.addSource(dbSource,
-                newData -> result.setValue(Resource.loading(newData)));
-        result.addSource(apiResponse, response -> {
-            result.removeSource(apiResponse);
-            result.removeSource(dbSource);
-            //noinspection ConstantConditions
-            if (response.isSuccessful()) {
-                saveResultAndReInit(response);
-            } else {
-                onFetchFailed();
-                result.addSource(dbSource,
-                        newData -> result.setValue(
-                                Resource.error(response.errorMessage, newData)));
-            }
-        });
-    }*/
-
     fun signIn(login: Login): LiveData<LoginResult> {
         val dbLogin = signInDatabase(login)
         mediatorLiveData.addSource(dbLogin, { data ->
