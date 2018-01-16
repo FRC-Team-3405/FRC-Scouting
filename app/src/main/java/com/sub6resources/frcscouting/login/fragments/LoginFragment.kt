@@ -8,6 +8,7 @@ import android.view.View
 import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.login.LoginFailure
+import com.sub6resources.frcscouting.login.LoginLoading
 import com.sub6resources.frcscouting.login.LoginSuccess
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.recyclerviews.UserRecyclerAdapter
@@ -54,14 +55,12 @@ class LoginFragment: BaseFragment() {
                 content("This should only take a moment.")
                 progress(true, 0)
             }
-            loadingDialog.show()
 
             viewModel.signIn(username, password).observe(this, Observer { loginResponse ->
                 when(loginResponse) {
                     is LoginSuccess -> {
                         loadingDialog.dismiss()
                         baseActivity.sharedPreferences.edit {
-                            //Set this user as the current user
                             putString("currentUser", loginResponse.user.username)
                         }.apply()
                         startActivity(Intent(baseActivity, MainActivity::class.java))
@@ -71,10 +70,12 @@ class LoginFragment: BaseFragment() {
                         when {
                             loginResponse.error == "HTTP 400 Bad Request" -> edittext_password.error = "Username or password is incorrect."
                             loginResponse.error.contains("Unable to resolve host") -> edittext_password.error = "Connection is unavailable. Please use an existing user."
-                            loginResponse.error == "UserDoesNotExistInLocalDatabase" -> return@Observer //Ignore this error.
                             else -> edittext_password.error = loginResponse.error
                         }
                         loadingDialog.dismiss()
+                    }
+                    is LoginLoading -> {
+                        loadingDialog.show()
                     }
                 }
             })

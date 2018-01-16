@@ -9,11 +9,9 @@ import java.util.*
  */
 @Entity()
 class User() {
-    @PrimaryKey()
-    lateinit var id: UUID
-
-    var username: String = ""
-    var token: String =  ""
+    @PrimaryKey
+    lateinit var username: String
+    lateinit var token: String
 
     @Ignore
     constructor(_username: String, _token: String) : this() {
@@ -24,7 +22,7 @@ class User() {
 
 @Dao
 interface UserDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun create(user: User)
 
     @Update
@@ -34,7 +32,7 @@ interface UserDao {
     fun delete(user: User)
 
     @Query("SELECT * FROM User WHERE username = :arg0")
-    fun signIn(username: String): User
+    fun signIn(username: String): LiveData<User>
 
     @Query("SELECT * FROM User")
     fun getUsers(): LiveData<List<User>>
