@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule: Module = applicationContext {
     val retrofit = Retrofit.Builder().apply {
-        baseUrl("http://watch.ryanberger.me")
+        baseUrl("http://robot.ryanberger.me")
         client(OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }).build())
         addConverterFactory(GsonConverterFactory.create())
         addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -30,4 +30,3 @@ val appModule: Module = applicationContext {
 fun getLoginApi(retrofit: Retrofit): LoginApi {
     return retrofit.create(LoginApi::class.java)
 }
-
