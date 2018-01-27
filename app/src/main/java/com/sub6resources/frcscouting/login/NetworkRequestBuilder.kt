@@ -2,73 +2,65 @@ package com.sub6resources.frcscouting.login
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.util.Log
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-typealias loading<U> = (() -> U)
-typealias success<T, U> = ((param: T) -> U)
-typealias failure<U> = ((error: Throwable) -> U)
-typealias insert<T> = ((param: T) -> Unit)
+sealed class BasicNetworkState<T> {
+    class Loading<T> : BasicNetworkState<T>()
+    class Success<T>(val data: T) : BasicNetworkState<T>()
+    class Error<T>(val message: String) : BasicNetworkState<T>()
+}
 
-class NetworkLiveDataBuilder<T, U> {
-    private var loading: loading<U>? = null
-    private var success: success<T, U>? = null
-    private var failure: failure<U>? = null
+fun <T, U> passThrough(first: T, second: U): MutableLiveData<U> = MutableLiveData<U>().apply { value = second }
 
-    fun onLoad(l: loading<U>) { loading = l }
-    fun onSuccess(s: success<T, U>) { success = s }
-    fun onFailure(f: failure<U>) { failure = f }
-
-    fun build(networkCall: Single<T>): LiveData<U> {
-        val mediatorLiveData: MediatorLiveData<U> = MediatorLiveData()
-        mediatorLiveData.postValue(loading?.invoke())
-        networkCall.subscribe({
-            mediatorLiveData.postValue(success?.invoke(it))
-        }, {
-            mediatorLiveData.postValue(failure?.invoke(it))
-        })
-        return mediatorLiveData
+infix fun <T, U> LiveData<BasicNetworkState<T>>.chainOnSuccess(next: (param: T) -> LiveData<BasicNetworkState<U>>): LiveData<BasicNetworkState<U>> {
+    return Transformations.switchMap(this) {
+        when (it) {
+            is BasicNetworkState.Loading<T> -> passThrough(it, BasicNetworkState.Loading())
+            is BasicNetworkState.Error<T> -> passThrough(it, BasicNetworkState.Error(it.message))
+            is BasicNetworkState.Success<T> -> next(it.data)
+        }
     }
 }
 
-class RoomNetworkBuilder<T, U> {
-    private var loading: loading<U>? = null
-    private var success: success<T, U>? = null
-    private var failure: failure<U>? = null
-    private var insert: insert<T>? = null
+class ExtrasHandler<T> {
+    // force the implementation of methods. Don't worry, if you don't need an insert,
+    // it won't be called
 
-    fun insert(i: insert<T>) { insert = i}
-    fun onLoad(l: loading<U>) { loading = l}
-    fun onSuccess(s: success<T, U>) { success = s }
-    fun onFailure(f: failure<U>) { failure = f }
+    var insertFunction: ((d: T) -> Unit)? = { Log.e("NETWORKEXTRAS", "You haven't implemented an insert function!!!") }
+        private set
 
-    fun build(networkCall: Single<T>, query: LiveData<T>): LiveData<U> {
-        val mediatorLiveData: MediatorLiveData<U> = MediatorLiveData()
-        mediatorLiveData.postValue(loading?.invoke())
-        mediatorLiveData.addSource(query) { it?.let { mediatorLiveData.postValue(success?.invoke(it)) } }
-        networkCall.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            this.insert?.invoke(it)
-        }, {
-            mediatorLiveData.postValue(failure?.invoke(it))
-        })
-        return mediatorLiveData
+    var errorFunction: ((t: Throwable) -> BasicNetworkState.Error<T>) = { BasicNetworkState.Error("Unknown Error") }
+        private set
+
+    fun onError(error: (t: Throwable) -> BasicNetworkState.Error<T>) {
+        errorFunction = error
+    }
+
+    fun insert(insert: (d: T) -> Unit) {
+        insertFunction = insert
     }
 }
 
-inline fun <T, U> makeNetworkRequest(call: Single<T>, builder: NetworkLiveDataBuilder<T, U>.() -> Unit): LiveData<U> {
-    val b = NetworkLiveDataBuilder<T, U>()
-    b.apply(builder)
-    return b.build(call)
-}
+inline fun <T> makeNetworkRequest(call: Single<T>, query: LiveData<T>? = null, handler: ExtrasHandler<T>.() -> Unit = {}): LiveData<BasicNetworkState<T>> {
+    val mediator: MediatorLiveData<BasicNetworkState<T>> = MediatorLiveData()
+    mediator.value = BasicNetworkState.Loading()
+    val extrasHandler = ExtrasHandler<T>().apply { handler() }
 
-inline fun <T, U> makeNetworkRequest(call: Single<T>, query: LiveData<T>, builder: RoomNetworkBuilder<T, U>.() -> Unit): LiveData<U> {
-    val b = RoomNetworkBuilder<T, U>()
-    b.apply(builder)
-    return b.build(call, query)
-}
+    call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+        if (query == null) {
+            mediator.postValue(BasicNetworkState.Success(it))
+        } else {
+            extrasHandler.insertFunction?.invoke(it)
+            mediator.addSource(query) { mediator.postValue(BasicNetworkState.Success(it!!)) }
+        }
+    }, {
+        mediator.postValue(extrasHandler.errorFunction.invoke(it))
+    })
 
-infix fun <T, U> LiveData<T>.chain(next: (param: T) -> LiveData<U>): LiveData<U> {
-    return Transformations.switchMap(this) { next(it) }
+    return mediator
 }

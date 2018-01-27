@@ -14,17 +14,11 @@ import java.util.*
  */
 class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
 
-    fun signIn(login: Login): LiveData<LoginResult> = makeNetworkRequest(loginApi.signIn(login), userDao.signIn(login.username)) {
-        insert    { userDao.create(it.apply { username = login.username }) }
-        onLoad    { LoginLoading() }
-        onSuccess { LoginSuccess(it) }
-        onFailure { LoginFailure(it.message ?: it.toString()) }
+    /*fun signIn(login: Login): LiveData<BasicNetworkState<User>> = makeNetworkRequest(loginApi.signIn(login), userDao.signIn(login.username)) {
+        insert { userDao.create(it.apply { username = login.username }) }
+    }*/
+
+    fun signIn(login: Login): LiveData<BasicNetworkState<User>> = makeNetworkRequest(loginApi.signIn(login), userDao.signIn(login.username)) {
+        insert { userDao.create(it.apply { username = login.username })}
     }
 }
-
-
-//Sealed class for the win
-sealed class LoginResult
-data class LoginSuccess(val user: User): LoginResult()
-data class LoginFailure(val error: String): LoginResult()
-class LoginLoading: LoginResult()

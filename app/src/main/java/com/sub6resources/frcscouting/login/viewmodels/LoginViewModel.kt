@@ -3,6 +3,7 @@ package com.sub6resources.frcscouting.login.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.sub6resources.frcscouting.login.*
@@ -21,22 +22,14 @@ class LoginViewModel: BaseViewModel() {
 
     val loginRepository by inject<LoginRepository>()
     val userDao by inject<UserDao>()
+    val offlineUsers = Transformations.map(userDao.getUsers()) {it}
+    val login = MutableLiveData<Login>()
+    val user = Transformations.switchMap(login) {loginRepository.signIn(it)}
 
-    fun signIn(username: String, password: String): LiveData<LoginResult> {
-        if(username.isBlank()) {
-            return MutableLiveData<LoginResult>().apply {
-                value = LoginFailure("Username is required")
-            }
-        }
-        if(password.isBlank()) {
-            return MutableLiveData<LoginResult>().apply {
-                value = LoginFailure("Password is required")
-            }
-        }
-        return loginRepository.signIn(Login(username, password))
-    }
-
-    fun getOfflineUsers(): LiveData<List<User>> {
-        return userDao.getUsers()
+    fun signIn(username: String, password: String): Boolean {
+        if(username.isBlank() || password.isBlank())
+            return false
+        login.value = Login(username, password)
+        return true
     }
 }

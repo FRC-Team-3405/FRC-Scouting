@@ -7,9 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
-import com.sub6resources.frcscouting.login.LoginFailure
-import com.sub6resources.frcscouting.login.LoginLoading
-import com.sub6resources.frcscouting.login.LoginSuccess
+import com.sub6resources.frcscouting.login.BasicNetworkState
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.recyclerviews.UserRecyclerAdapter
 import com.sub6resources.frcscouting.login.viewmodels.LoginViewModel
@@ -41,7 +39,7 @@ class LoginFragment: BaseFragment() {
         recycler_existing_users.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recycler_existing_users.adapter = userAdapter
 
-        observeNotNull(viewModel.getOfflineUsers()) {
+        observeNotNull(viewModel.offlineUsers) {
             userAdapter.replaceData(it)
         }
 
@@ -56,29 +54,35 @@ class LoginFragment: BaseFragment() {
                 progress(true, 0)
             }
 
-            viewModel.signIn(username, password).observe(this, Observer { loginResponse ->
-                when(loginResponse) {
-                    is LoginSuccess -> {
-                        loadingDialog.dismiss()
-                        baseActivity.sharedPreferences.edit {
-                            putString("currentUser", loginResponse.user.username)
-                        }.apply()
-                        startActivity(Intent(baseActivity, MainActivity::class.java))
-                    }
-                    is LoginFailure -> {
-                        //Display error message
-                        when {
-                            loginResponse.error == "HTTP 400 Bad Request" -> edittext_password.error = "Username or password is incorrect."
-                            loginResponse.error.contains("Unable to resolve host") -> edittext_password.error = "Connection is unavailable. Please use an existing user."
-                            else -> edittext_password.error = loginResponse.error
+
+            if(viewModel.signIn(username, password)) {
+                viewModel.user.observe(this, Observer { loginResponse: BasicNetworkState<User>? ->
+                    when(loginResponse) {
+                        is BasicNetworkState.Success<User> -> {
+                            loadingDialog.dismiss()
+                            baseActivity.sharedPreferences.edit {
+                                putString("currentUser", loginResponse.data.username)
+                            }.apply()
+                            startActivity(Intent(baseActivity, MainActivity::class.java))
                         }
-                        loadingDialog.dismiss()
+                        is BasicNetworkState.Error -> {
+                            //Display error message
+                            when {
+                                loginResponse.message == "HTTP 400 Bad Request" -> edittext_password.error = "Username or password is incorrect."
+                                loginResponse.message.contains("Unable to resolve host") -> edittext_password.error = "Connection is unavailable. Please use an existing user."
+                                else -> edittext_password.error = loginResponse.message
+                            }
+                            loadingDialog.dismiss()
+                        }
+                        is BasicNetworkState.Loading -> {
+                            loadingDialog.show()
+                        }
                     }
-                    is LoginLoading -> {
-                        loadingDialog.show()
-                    }
-                }
-            })
+                })
+            } else {
+                edittext_password.error = "Username and password are required"
+            }
+
         }
     }
 }
