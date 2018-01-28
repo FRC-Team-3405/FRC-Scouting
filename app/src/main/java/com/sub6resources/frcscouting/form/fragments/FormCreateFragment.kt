@@ -12,6 +12,7 @@ import com.sub6resources.frcscouting.form.recyclerviews.FieldListRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.ChoiceCreateViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
 import com.sub6resources.utilities.*
+import java.util.*
 
 /*
  * Created by Matthew on 12/2/17.
@@ -41,7 +42,7 @@ class FormCreateFragment : BaseFragment() {
 
         activity?.let {
             it.intent?.let {
-                viewModel.selectForm(it.getLongExtra("formId", 0))
+                viewModel.selectForm(it.extras["formId"] as UUID)
             }
         }
 
@@ -68,7 +69,7 @@ class FormCreateFragment : BaseFragment() {
         saveForm.onClick {
             //Save the form
             viewModel.saveForm(formTitle.getString())
-            activity?.finish()
+            baseActivity.finish()
         }
     }
 }

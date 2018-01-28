@@ -9,6 +9,8 @@ import com.sub6resources.frcscouting.formresponse.model.FieldResponse
 import com.sub6resources.frcscouting.formresponse.model.FieldResponseDao
 import com.sub6resources.frcscouting.formresponse.model.FormResponse
 import com.sub6resources.frcscouting.formresponse.model.FormResponseDao
+import com.sub6resources.frcscouting.login.model.User
+import com.sub6resources.frcscouting.login.model.UserDao
 import com.sub6resources.frcscouting.scout.model.Scout
 
 /**
@@ -22,9 +24,11 @@ import com.sub6resources.frcscouting.scout.model.Scout
                 Choice::class,
                 Competition::class,
                 FormResponse::class,
-                FieldResponse::class
+                FieldResponse::class,
+                User::class,
+                Image::class
         ),
-        version = 2
+        version = 13
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -33,4 +37,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val fieldDao: FieldDao
     abstract val formResponseDao: FormResponseDao
     abstract val fieldResponseDao: FieldResponseDao
+    abstract val userDao: UserDao
+    abstract val imageDao: ImageDao
 }

@@ -5,6 +5,7 @@ package com.sub6resources.frcscouting.form.model
  */
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import java.util.*
 
 /**
  * Created by ryanberger on 8/11/17.
@@ -21,9 +22,9 @@ import android.arch.persistence.room.*
 )
 class Choice() {
 
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-    var fieldId: Long = 0
+    @PrimaryKey()
+    lateinit var id: UUID
+    lateinit var fieldId: UUID
     var choiceText: String = ""
 
     @Ignore
@@ -36,7 +37,7 @@ class Choice() {
 @Dao
 interface ChoiceDao {
     @Insert()
-    fun create(choice: Choice): Long
+    fun create(choice: Choice)
 
     @Insert()
     fun createAll(choices: List<Choice>)
@@ -44,10 +45,13 @@ interface ChoiceDao {
     @Update
     fun update(choice: Choice)
 
-    @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
-    fun getChoiceForField(fieldId: Long): LiveData<List<Choice>>
+    @Query("SELECT * FROM Choice WHERE id = :arg0")
+    fun get(id: UUID): Choice
 
     @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
-    fun getChoicesForField(fieldId: Long): List<Choice>
+    fun getChoiceForField(fieldId: UUID): LiveData<List<Choice>>
+
+    @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
+    fun getChoicesForField(fieldId: UUID): List<Choice>
 
 }

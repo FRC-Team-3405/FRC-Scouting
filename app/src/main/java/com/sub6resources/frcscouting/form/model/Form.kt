@@ -2,12 +2,13 @@ package com.sub6resources.frcscouting.form.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import java.util.UUID
 
 
 @Entity()
 class Form() {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    @PrimaryKey()
+    lateinit var id: UUID
 
     var name: String = ""
     var isDraft: Boolean = true
@@ -20,7 +21,7 @@ class Form() {
 @Dao
 interface FormDao {
     @Insert()
-    fun create(form: Form): Long
+    fun create(form: Form)
 
     @Update
     fun update(form: Form)
@@ -29,7 +30,7 @@ interface FormDao {
     fun delete(form: Form)
 
     @Query("SELECT * FROM Form WHERE id = :arg0")
-    fun get(formId: Long): LiveData<Form>
+    fun get(formId: UUID): LiveData<Form>
 
     @Query("SELECT * FROM Form WHERE isDraft = 0")
     fun getForms(): LiveData<List<Form>>

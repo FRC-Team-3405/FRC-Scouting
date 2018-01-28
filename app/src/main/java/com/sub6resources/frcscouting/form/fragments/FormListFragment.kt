@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
+import android.view.MenuItem
 import android.view.View
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.FormActivity
@@ -15,6 +16,9 @@ import com.sub6resources.frcscouting.form.viewmodels.FormListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.frcscouting.form.views.FormListPagerAdapter
 import com.sub6resources.frcscouting.form.views.FormListView
+import com.sub6resources.frcscouting.formresponse.ResponseActivity
+import com.sub6resources.frcscouting.login.LoginActivity
+import com.sub6resources.frcscouting.login.fragments.LoginFragment
 import com.sub6resources.utilities.BaseFragment
 import com.sub6resources.utilities.bind
 import com.sub6resources.utilities.onClick
@@ -24,7 +28,9 @@ import kotlinx.android.synthetic.main.fragment_formlist.*
  * Created by whitaker on 12/26/17.
  */
 class FormListFragment : BaseFragment() {
-    override val fragLayout: Int = R.layout.fragment_formlist
+    override val fragLayout = R.layout.fragment_formlist
+    override val toolbar = R.id.landing_toolbar
+    override val menu = R.menu.menu_formlist
 
     val viewModel by getViewModel(FormListViewModel::class.java)
     val formViewModel by getSharedViewModel(FormViewModel::class.java)
@@ -42,10 +48,8 @@ class FormListFragment : BaseFragment() {
                         putExtra("formId", it)
                     })
                 },
-
-                onClick = {
-
-                }
+                responseClick = {},
+                onClick = {}
         )
     }
 
@@ -59,10 +63,12 @@ class FormListFragment : BaseFragment() {
                         putExtra("formResponseId", formViewModel.createFormResponse(it))
                     })
                 },
-
-                onClick = {
-
-                }
+                responseClick = {
+                    startActivity(Intent(baseActivity, ResponseActivity::class.java).apply {
+                        putExtra("formId", it)
+                    })
+                },
+                onClick = {}
         )
     }
 
@@ -104,5 +110,15 @@ class FormListFragment : BaseFragment() {
             viewModel.syncData()
             swipe_container.isRefreshing = false
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.switch_user -> {
+                startActivity(Intent(baseActivity, LoginActivity::class.java))
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -1,22 +1,26 @@
 package com.sub6resources.frcscouting.form.fragments
 
 import android.app.Activity.RESULT_OK
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Base64
 import android.view.View
-import android.support.v7.widget.Toolbar
 import com.sub6resources.frcscouting.R
+import com.sub6resources.frcscouting.form.model.Image
 import com.sub6resources.frcscouting.form.recyclerviews.FormRecyclerAdapter
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
 import com.sub6resources.utilities.*
 import kotlinx.android.synthetic.main.fragment_form.*
-import android.util.Base64
-import android.util.Log
 import java.io.ByteArrayOutputStream
+import java.util.UUID
+import android.graphics.BitmapFactory
+
+
 
 
 /**
@@ -26,8 +30,9 @@ class FormFragment: BaseFragment() {
     override val fragLayout = R.layout.fragment_form
 
     val viewModel by getSharedViewModel(FormViewModel::class.java)
-    val toolbar by bind<Toolbar>(R.id.quiz_toolbar)
     val formRecycler by bind<RecyclerView>(R.id.form_recycler)
+
+    var isEditing = false
 
     override fun onDestroy() {
         super.onDestroy()
@@ -42,6 +47,15 @@ class FormFragment: BaseFragment() {
                 setAnswer = { field, answer ->
                     viewModel.setAnswer(field, answer)
                 },
+                getAnswer = { field ->
+                    viewModel.getAnswer(field)
+                },
+                getExistingImages = { field, callback ->
+                    callback(viewModel.getImages(field).map<Image, Bitmap> {
+                        val decodedString = Base64.decode(it.base64, Base64.DEFAULT)
+                        BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+                    })
+                },
                 selectImages = { field, callback ->
                     (activity as BaseActivity).startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE)) { resultCode, data ->
                         if (resultCode == RESULT_OK) {
@@ -50,9 +64,10 @@ class FormFragment: BaseFragment() {
                             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
                             val byteArrayImage = baos.toByteArray()
                             val encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
-                            //Get current answer
-                            viewModel.appendToAnswer(field, encodedImage)
-                            callback(imageBitmap)
+
+                            val count = viewModel.appendToAnswer(field, encodedImage)
+                            //Callback the bitmap and the number of images.
+                            callback(imageBitmap, count)
                         }
                     }
                 }
@@ -60,14 +75,15 @@ class FormFragment: BaseFragment() {
     }
 
     override fun onBackPressed() {
-        activity!!.dialog {
+        baseActivity.dialog {
             title("Exit without submitting?")
             content("This form submission will be lost if you exit. Are you sure you want to exit?")
             positiveText("Okay")
             negativeText("Cancel")
             onPositive { _,_ ->
-                viewModel.deleteFormResponse()
-                activity!!.finish()
+                if(!isEditing)
+                    viewModel.deleteFormResponse()
+                baseActivity.finish()
             }
         }.show()
     }
@@ -78,28 +94,32 @@ class FormFragment: BaseFragment() {
         formRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         formRecycler.adapter = formAdapter
 
-        activity?.let {
-            it.intent?.let {
-                viewModel.selectForm(it.getLongExtra("formId", 0))
-                viewModel.selectFormResponse(it.getLongExtra("formResponseId", 0))
-            }
+        baseActivity.intent?.let {
+            viewModel.selectForm(it.extras["formId"] as UUID)
+            viewModel.selectFormResponse(it.extras["formResponseId"] as UUID)
+            isEditing = it.extras["editing"] != null
         }
 
         observeNotNull(viewModel.form) {
-            toolbar.title = it.name
+            quiz_toolbar.title = it.name
         }
 
         observeNotNull(viewModel.fields) {
             formAdapter.replaceData(it)
         }
 
-        //Just happily observing so values aren't null.
-        observeNotNull(viewModel.fieldResponses) {}
+        observeNotNull(viewModel.fieldResponses) {
+
+        }
+
+        //😢
         observeNotNull(viewModel.formResponse) {}
 
         button_submit.onClick {
             if(viewModel.validateFormCompleted()) {
-                activity!!.finish()
+                baseActivity.finish()
+            } else {
+                //Form is invalid TODO show an error message
             }
         }
     }

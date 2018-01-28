@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import android.arch.persistence.room.ForeignKey.CASCADE
 import com.sub6resources.frcscouting.form.model.Form
+import java.util.*
 
 /**
  * Created by whitaker on 12/28/17.
@@ -20,15 +21,15 @@ import com.sub6resources.frcscouting.form.model.Form
         indices = arrayOf(Index("formId"))
 )
 class FormResponse {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
-    var formId: Long = 0
+    @PrimaryKey()
+    lateinit var id: UUID
+    lateinit var formId: UUID
 }
 
 @Dao
 interface FormResponseDao {
     @Insert()
-    fun create(formResponse: FormResponse): Long
+    fun create(formResponse: FormResponse)
 
     @Update
     fun update(formResponse: FormResponse)
@@ -37,8 +38,8 @@ interface FormResponseDao {
     fun delete(formResponse: FormResponse)
 
     @Query("SELECT * FROM FormResponse WHERE id = :arg0")
-    fun get(formResponseId: Long): LiveData<FormResponse>
+    fun get(formResponseId: UUID): LiveData<FormResponse>
 
     @Query("SELECT * FROM FormResponse WHERE formId = :arg0")
-    fun getFormResponses(formId: Long): LiveData<List<FormResponse>>
+    fun getFormResponses(formId: UUID): LiveData<List<FormResponse>>
 }

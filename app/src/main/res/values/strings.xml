@@ -6,4 +6,8 @@
         <item>Short Answer</item>
         <item>Image</item>
     </array>
+    <plurals name="images_selected">
+        <item quantity="other">%1$d images selected</item>
+        <item quantity="one">%1$d image selected</item>
+    </plurals>
 </resources>
