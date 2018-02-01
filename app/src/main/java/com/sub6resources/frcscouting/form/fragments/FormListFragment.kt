@@ -68,7 +68,11 @@ class FormListFragment : BaseFragment() {
                         putExtra("formId", it)
                     })
                 },
-                onClick = {}
+                onClick = {
+                    startActivity(Intent(baseActivity, FormCreateActivity::class.java).apply {
+                        putExtra("formId", it)
+                    })
+                }
         )
     }
 

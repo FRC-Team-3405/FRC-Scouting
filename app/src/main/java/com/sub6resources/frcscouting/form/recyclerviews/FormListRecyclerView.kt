@@ -1,5 +1,6 @@
 package com.sub6resources.frcscouting.form.recyclerviews
 
+import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -16,6 +17,7 @@ class FormListRecyclerViewHolder(v: View, val takeForm: (id: UUID) -> Unit, val 
     val name by bind<TextView>(R.id.recycler_form_name)
     val take_form by bind<Button>(R.id.recycler_take_form)
     val viewResponses by bind<Button>(R.id.recycler_form_responses)
+    val card by bind<CardView>(R.id.item_form_container)
 
     override fun onBind(data: Form) {
         name.text = data.name
@@ -33,9 +35,9 @@ class FormListRecyclerViewHolder(v: View, val takeForm: (id: UUID) -> Unit, val 
             responseClick(data.id)
         }
 
-
-
-
+        card.onClick {
+            onClick(data.id)
+        }
     }
 }
 
