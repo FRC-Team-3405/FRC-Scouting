@@ -45,7 +45,7 @@ class FormFragment: BaseFragment() {
                     viewModel.getChoicesForField(field.id)
                 },
                 setAnswer = { field, answer ->
-                    viewModel.setAnswer(field, answer)
+                    viewModel.setAnswer(field, answer, baseActivity.sharedPreferences.getString("currentUser", ""))
                 },
                 getAnswer = { field ->
                     viewModel.getAnswer(field)
@@ -65,7 +65,7 @@ class FormFragment: BaseFragment() {
                             val byteArrayImage = baos.toByteArray()
                             val encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
 
-                            val count = viewModel.appendToAnswer(field, encodedImage)
+                            val count = viewModel.appendToAnswer(field, encodedImage, baseActivity.sharedPreferences.getString("currentUser", ""))
                             //Callback the bitmap and the number of images.
                             callback(imageBitmap, count)
                         }
