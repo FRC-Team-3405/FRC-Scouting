@@ -5,6 +5,7 @@ import android.arch.persistence.room.*
 import android.arch.persistence.room.ForeignKey.CASCADE
 import com.sub6resources.frcscouting.form.model.Choice
 import com.sub6resources.frcscouting.form.model.Field
+import com.sub6resources.frcscouting.login.model.User
 import java.util.*
 
 /**
@@ -29,6 +30,11 @@ import java.util.*
                         childColumns = arrayOf("choice"),
                         parentColumns = arrayOf("id"),
                         onDelete = CASCADE
+                ),
+                ForeignKey(
+                        entity = User::class,
+                        childColumns = arrayOf("lastEditedBy"),
+                        parentColumns = arrayOf("username")
                 )
         ),
         indices = arrayOf(Index("formResponseId"), Index("fieldId"), Index("choice"))
@@ -39,6 +45,8 @@ class FieldResponse {
 
     lateinit var formResponseId: UUID
     lateinit var fieldId: UUID
+
+    var lastEditedBy: String? = null
 
     lateinit var choice: UUID
 }

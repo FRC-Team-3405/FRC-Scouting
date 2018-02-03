@@ -52,11 +52,12 @@ class FormViewModel : BaseViewModel() {
         return null
     }
 
-    fun setAnswer(field: Field, answer: String) {
+    fun setAnswer(field: Field, answer: String, username: String) {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
             correspondingFieldResponse.apply {
                 choice = choiceDao.getChoicesForField(field.id).find { it.choiceText == answer }?.id ?: generateNewChoice(field, answer)
+                lastEditedBy = username
             }
             fieldResponseDao.update(correspondingFieldResponse)
         } else {
@@ -66,13 +67,14 @@ class FormViewModel : BaseViewModel() {
                     fieldId = field.id
                     formResponseId = formRId
                     choice = choiceDao.getChoicesForField(field.id).find { it.choiceText == answer }?.id ?: generateNewChoice(field, answer)
+                    lastEditedBy = username
                 })
             }
         }
 
     }
 
-    fun appendToAnswer(field: Field, additionalAnswer: String): Int {
+    fun appendToAnswer(field: Field, additionalAnswer: String, username: String): Int {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
             imageDao.create(Image(UUID.randomUUID(), additionalAnswer, correspondingFieldResponse.id))
@@ -84,6 +86,7 @@ class FormViewModel : BaseViewModel() {
                     fieldId = field.id
                     formResponseId = formRId
                     choice = generateNewChoice(field, "0")
+                    lastEditedBy = username
                 }
                 fieldResponseDao.create(newFieldResponse)
                 imageDao.create(Image(UUID.randomUUID(), additionalAnswer, newFieldResponse.id))
