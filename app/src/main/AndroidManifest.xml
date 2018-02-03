@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sub6resources.frcscouting">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,13 +12,19 @@
         android:theme="@style/AppTheme"
         android:name=".App">
 
-        <activity android:name="com.sub6resources.frcscouting.MainActivity" android:fitsSystemWindows="true">
+        <activity android:name="com.sub6resources.frcscouting.MainActivity" />
+        <activity android:name=".form.FormCreateActivity" />
+        <activity android:name=".form.FormActivity" />
+        <activity android:name=".login.LoginActivity" android:fitsSystemWindows="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".formresponse.ResponseActivity"
+            android:parentActivityName=".MainActivity" />
 
     </application>
+
 </manifest>

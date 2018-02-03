@@ -1,13 +1,16 @@
 package com.sub6resources.frcscouting.database
 
 import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import android.content.Context
 import com.sub6resources.frcscouting.competition.model.Competition
-import com.sub6resources.frcscouting.form.model.Field
-import com.sub6resources.frcscouting.form.model.Form
+import com.sub6resources.frcscouting.form.model.*
+import com.sub6resources.frcscouting.formresponse.model.FieldResponse
+import com.sub6resources.frcscouting.formresponse.model.FieldResponseDao
+import com.sub6resources.frcscouting.formresponse.model.FormResponse
+import com.sub6resources.frcscouting.formresponse.model.FormResponseDao
+import com.sub6resources.frcscouting.login.model.User
+import com.sub6resources.frcscouting.login.model.UserDao
 import com.sub6resources.frcscouting.scout.model.Scout
 
 /**
@@ -18,28 +21,22 @@ import com.sub6resources.frcscouting.scout.model.Scout
                 Scout::class,
                 Form::class,
                 Field::class,
-                Competition::class
+                Choice::class,
+                Competition::class,
+                FormResponse::class,
+                FieldResponse::class,
+                User::class,
+                Image::class
         ),
-        version = 1
+        version = 16
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-
-
-    companion object Injector {
-        private var INSTANCE: AppDatabase? = null
-
-        fun startDatabase(context: Context) {
-            if (INSTANCE === null) {
-                INSTANCE = Room
-                        .databaseBuilder(context.applicationContext, AppDatabase::class.java, "app-database")
-                        .allowMainThreadQueries()
-                        .build()
-            }
-        }
-
-        fun getDatabase(): AppDatabase {
-            return INSTANCE!!
-        }
-    }
+    abstract val choiceDao: ChoiceDao
+    abstract val formDao: FormDao
+    abstract val fieldDao: FieldDao
+    abstract val formResponseDao: FormResponseDao
+    abstract val fieldResponseDao: FieldResponseDao
+    abstract val userDao: UserDao
+    abstract val imageDao: ImageDao
 }
