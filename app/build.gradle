@@ -6,13 +6,13 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.sub6resources.frcscouting"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,9 +32,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile "android.arch.lifecycle:runtime:1.0.3"
-    compile "android.arch.lifecycle:extensions:1.0.0"
-    kapt "android.arch.lifecycle:compiler:1.0.0"
+    compile "android.arch.lifecycle:runtime:1.1.0"
+    compile "android.arch.lifecycle:extensions:1.1.0"
+    kapt "android.arch.lifecycle:compiler:1.1.0"
     compile "android.arch.persistence.room:runtime:1.0.0"
     compile "android.arch.persistence.room:rxjava2:1.0.0"
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
@@ -43,13 +43,16 @@ dependencies {
     compile "com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.0.0"
     kapt "android.arch.persistence.room:compiler:1.0.0"
     compile 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.0.3'
-    compile 'com.github.Sub6Resources:Utilities:1.1.5'
+    compile 'com.github.Sub6Resources:Utilities:1.1.9'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.google.code.gson:gson:2.8.2'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'io.grpc:grpc-okhttp:1.9.0'
+    compile 'io.grpc:grpc-protobuf-lite:1.9.0'
+    compile 'io.grpc:grpc-stub:1.9.0'
 
     implementation "com.android.support:cardview-v7:$support_version"
 }
