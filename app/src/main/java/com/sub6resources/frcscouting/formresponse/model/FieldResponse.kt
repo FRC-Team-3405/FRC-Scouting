@@ -46,7 +46,7 @@ class FieldResponse {
     lateinit var formResponseId: UUID
     lateinit var fieldId: UUID
 
-    lateinit var lastEditedBy: String
+    var lastEditedBy: String? = null
 
     lateinit var choice: UUID
 }
