@@ -1,0 +1,7 @@
+syntax="proto3";
+package accounts;
+
+message Token {
+    string generatedToken = 1;
+    string userId = 2;
+}

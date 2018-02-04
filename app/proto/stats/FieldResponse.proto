@@ -1,0 +1,10 @@
+syntax="proto3";
+
+package stats;
+
+message FieldResponse {
+    string id = 1;
+    string formResponse = 2;
+    string field = 3;
+    string choice = 4;
+}

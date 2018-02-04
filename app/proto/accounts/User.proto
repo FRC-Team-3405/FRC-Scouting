@@ -1,0 +1,11 @@
+syntax="proto3";
+package accounts;
+
+message User {
+    string id = 1;
+    string username = 2;
+    string password = 3;
+    string firstName = 4;
+    string lastName = 5;
+    string emailAddress = 6;
+}

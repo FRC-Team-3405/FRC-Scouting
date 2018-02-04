@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package stats;
+
+message Choice {
+    string id = 1;
+    string fieldId = 2;
+    string choiceText = 3;
+}

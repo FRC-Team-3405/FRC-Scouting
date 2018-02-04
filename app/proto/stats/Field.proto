@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package stats;
+
+message Field {
+    string id = 1;
+    string fieldText = 2;
+    string form = 3;
+
+    enum Type {
+        TRUEFALSE = 0;
+        BLANK = 1;
+        MULTICHOICE = 2;
+        IMAGE = 3;
+    }
+
+    Type type = 4;
+}

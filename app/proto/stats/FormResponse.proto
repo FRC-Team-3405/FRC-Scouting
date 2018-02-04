@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package stats;
+
+message FormResponse {
+    string id = 1;
+    string form = 2;
+    string user = 3;
+}

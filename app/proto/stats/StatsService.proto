@@ -1,0 +1,17 @@
+syntax="proto3";
+
+import "Form.proto";
+import "FormResponse.proto";
+import "Choice.proto";
+import "Field.proto";
+import "FieldResponse.proto";
+
+package stats;
+
+service Stats {
+    rpc SyncForm(Form) returns (Form) {}
+    rpc SyncFormResponse(FormResponse) returns (FormResponse) {}
+    rpc SyncField(Field) returns (Field) {}
+    rpc SyncChoice(Choice) returns (Choice) {}
+    rpc SyncFieldResponse(FieldResponse) returns (FieldResponse) {}
+}
