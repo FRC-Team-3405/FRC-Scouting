@@ -1,6 +1,9 @@
 syntax="proto3";
 package accounts;
 
+option java_package = "com.sub6resources.frcscouting.protobuf.accounts";
+option java_outer_classname = "UserProto";
+
 message User {
     string id = 1;
     string username = 2;

@@ -1,0 +1,11 @@
+syntax="proto3";
+
+package stats;
+
+option java_package = "com.sub6resources.frcscouting.protobuf.stats";
+option java_outer_classname = "FormProto";
+
+message Form {
+    string id = 1;
+    string name = 2;
+}

@@ -1,0 +1,15 @@
+syntax="proto3";
+package accounts;
+
+option java_package = "com.sub6resources.frcscouting.protobuf.accounts";
+option java_outer_classname = "AccountsServiceProto";
+
+import "accounts/User.proto";
+import "accounts/Token.proto";
+//import "google/protobuf/empty.proto";
+
+service AccountsService {
+    //rpc GetUser(google.protobuf.Empty) returns (User) {}
+    rpc CreateUser(User) returns (User) {}
+    rpc Authenticate(User) returns (Token) {}
+}

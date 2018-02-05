@@ -1,12 +1,15 @@
 syntax="proto3";
 
-import "Form.proto";
-import "FormResponse.proto";
-import "Choice.proto";
-import "Field.proto";
-import "FieldResponse.proto";
+import "stats/Form.proto";
+import "stats/FormResponse.proto";
+import "stats/Choice.proto";
+import "stats/Field.proto";
+import "stats/FieldResponse.proto";
 
 package stats;
+
+option java_package = "com.sub6resources.frcscouting.protobuf.stats";
+option java_outer_classname = "StatsProto";
 
 service Stats {
     rpc SyncForm(Form) returns (Form) {}
