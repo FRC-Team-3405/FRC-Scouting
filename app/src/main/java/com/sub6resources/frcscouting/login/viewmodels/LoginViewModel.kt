@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.sub6resources.frcscouting.login.*
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
+import com.sub6resources.frcscouting.protobuf.accounts.TokenProto
 import com.sub6resources.utilities.BaseViewModel
 import org.koin.standalone.inject
 import retrofit2.Call
@@ -31,5 +32,9 @@ class LoginViewModel: BaseViewModel() {
             return false
         login.value = Login(username, password)
         return true
+    }
+
+    fun testGrpc(): TokenProto.Token {
+        return loginRepository.doStuffWithUser()
     }
 }

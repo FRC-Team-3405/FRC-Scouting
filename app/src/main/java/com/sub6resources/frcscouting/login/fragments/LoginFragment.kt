@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
@@ -55,7 +56,7 @@ class LoginFragment: BaseFragment() {
             }
 
 
-            if(viewModel.signIn(username, password)) {
+            /*if(viewModel.signIn(username, password)) {
                 viewModel.user.observe(this, Observer { loginResponse: BasicNetworkState<User>? ->
                     when(loginResponse) {
                         is BasicNetworkState.Success<User> -> {
@@ -81,7 +82,8 @@ class LoginFragment: BaseFragment() {
                 })
             } else {
                 edittext_password.error = "Username and password are required"
-            }
+            }*/
+            Log.d("GRPC", viewModel.testGrpc().generatedToken)
 
         }
     }
