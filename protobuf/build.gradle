@@ -12,12 +12,19 @@ buildscript {
     }
 }
 
+sourceSets {
+    generated{
+        java.srcDir "${projectDir}/build/generated/source/proto/main/java"
+        java.srcDir "${projectDir}/build/generated/source/proto/main/grpc"
+    }
+}
+
 dependencies {
-    compile 'com.google.protobuf:protobuf-java:3.5.1'
-    compile 'io.grpc:grpc-okhttp:1.9.0' // CURRENT_GRPC_VERSION
-    compile 'io.grpc:grpc-protobuf-lite:1.9.0' // CURRENT_GRPC_VERSION
-    compile 'io.grpc:grpc-stub:1.9.0' // CURRENT_GRPC_VERSION
-    compile 'io.grpc:grpc-protobuf:1.9.0'
+    implementation 'com.google.protobuf:protobuf-java:3.5.1'
+    implementation('io.grpc:grpc-okhttp:1.9.0') {exclude group:'com.google.protobuf'} // CURRENT_GRPC_VERSION
+    implementation('io.grpc:grpc-protobuf-lite:1.9.0') {exclude group:'com.google.protobuf'} // CURRENT_GRPC_VERSION
+    implementation('io.grpc:grpc-stub:1.9.0') {exclude group:'com.google.protobuf'} // CURRENT_GRPC_VERSION
+    implementation('io.grpc:grpc-protobuf:1.9.0') {exclude group:'com.google.protobuf'}
 }
 
 protobuf {

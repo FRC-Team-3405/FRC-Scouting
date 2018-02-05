@@ -1,12 +1,10 @@
 package com.sub6resources.frcscouting.login
 
 import android.arch.lifecycle.LiveData
-import com.google.protobuf.ExtensionRegistryLite
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
 
 //import com.sub6resources.frcscouting.protobuf.accounts.*
-import io.grpc.ManagedChannelBuilder
 
 /**
  * Created by whitaker on 1/8/18.
@@ -18,7 +16,7 @@ class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
     }
 
     fun doStuffWithUser() {
-        val mChannel = ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext(true).build()
+        //val mChannel = ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext(true).build()
         //val blockingStub = AccountsServiceGrpc.newBlockingStub(mChannel);
         //val asyncStub = AccountsServiceProto.newStub(mChannel);
     }
