@@ -4,9 +4,10 @@ import android.arch.lifecycle.LiveData
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
 
-import com.sub6resources.frcscouting.protobuf.accounts.*
+import com.sub6resources.frcscouting.protobuf.AccountsServiceGrpc
+import com.sub6resources.frcscouting.protobuf.accounts.TokenProto
+import com.sub6resources.frcscouting.protobuf.accounts.UserProto
 import io.grpc.ManagedChannelBuilder
-import io.grpc.stub.StreamObserver
 
 /**
  * Created by whitaker on 1/8/18.
@@ -23,7 +24,6 @@ class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
         val asyncStub = AccountsServiceGrpc.newStub(mChannel)
 
         return blockingStub.authenticate(user)
-
     }
     val user by lazy {
         UserProto.User.newBuilder().apply {

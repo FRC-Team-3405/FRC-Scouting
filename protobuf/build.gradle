@@ -17,6 +17,10 @@ sourceSets {
         java.srcDir "${buildDir}/generated/source/proto/main/java"
         java.srcDir "${buildDir}/generated/source/proto/main/grpc"
     }
+    main {
+        java.srcDirs = ["${buildDir}/generated/source/proto/main/java", "${buildDir}/generated/source/proto/main/grpc"]
+        allSource.srcDir "src/main"
+    }
 }
 
 dependencies {
