@@ -1,0 +1,3 @@
+[submodule "protobuf/src/main/proto"]
+	path = protobuf/src/main/proto
+	url = http://gitlab.ryanberger.me/Robotics/proto.git
