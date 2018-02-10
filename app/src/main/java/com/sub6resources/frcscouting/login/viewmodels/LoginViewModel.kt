@@ -1,20 +1,13 @@
 package com.sub6resources.frcscouting.login.viewmodels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
+import accounts.TokenOuterClass
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.sub6resources.frcscouting.login.*
-import com.sub6resources.frcscouting.login.model.User
+import com.sub6resources.frcscouting.login.Login
+import com.sub6resources.frcscouting.login.LoginRepository
 import com.sub6resources.frcscouting.login.model.UserDao
-import com.sub6resources.frcscouting.protobuf.accounts.TokenProto
 import com.sub6resources.utilities.BaseViewModel
 import org.koin.standalone.inject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * Created by whitaker on 12/30/17.
@@ -34,7 +27,7 @@ class LoginViewModel: BaseViewModel() {
         return true
     }
 
-    fun testGrpc(): TokenProto.Token {
+    fun testGrpc(): TokenOuterClass.Token {
         return loginRepository.doStuffWithUser()
     }
 }

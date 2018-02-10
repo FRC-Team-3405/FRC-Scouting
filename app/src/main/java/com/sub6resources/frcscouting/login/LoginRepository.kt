@@ -1,12 +1,13 @@
 package com.sub6resources.frcscouting.login
 
+import accounts.AccountsServiceGrpc
+import accounts.TokenOuterClass
+import accounts.UserOuterClass
 import android.arch.lifecycle.LiveData
+import android.util.Log
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
 
-import com.sub6resources.frcscouting.protobuf.AccountsServiceGrpc
-import com.sub6resources.frcscouting.protobuf.accounts.TokenProto
-import com.sub6resources.frcscouting.protobuf.accounts.UserProto
 import io.grpc.ManagedChannelBuilder
 
 /**
@@ -18,17 +19,23 @@ class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
         insert { userDao.create(it.apply { username = login.username })}
     }
 
-    fun doStuffWithUser(): TokenProto.Token {
+    fun doStuffWithUser(): TokenOuterClass.Token {
         val mChannel = ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext(true).build()
         val blockingStub = AccountsServiceGrpc.newBlockingStub(mChannel)
         val asyncStub = AccountsServiceGrpc.newStub(mChannel)
 
-        return blockingStub.authenticate(user)
+        try {
+            return blockingStub.authenticate(user)
+        } catch(e: io.grpc.StatusRuntimeException) {
+            Log.e("GRPC Error", "${e.status.code.value()} : " + e.trailers.toString(), e)
+        } finally {
+            return TokenOuterClass.Token.newBuilder().build()
+        }
     }
     val user by lazy {
-        UserProto.User.newBuilder().apply {
-            id = ""
-            username = "Test"
+        UserOuterClass.User.newBuilder().apply {
+            id = "7be58aaf-c844-4ee4-a449-8c917e8433e6" //Was 7
+            username = "TestUser" //Was just Test
             password = "T3st"
             firstName = "Test"
             lastName = "User"

@@ -83,7 +83,9 @@ class LoginFragment: BaseFragment() {
             } else {
                 edittext_password.error = "Username and password are required"
             }*/
-            Log.d("GRPC", viewModel.testGrpc().generatedToken)
+            Log.d("GRPC", "Presuccess!")
+            Log.d("GRPC", viewModel.testGrpc().generatedToken.toString())
+            Log.d("GRPC", "Success!")
 
         }
     }
