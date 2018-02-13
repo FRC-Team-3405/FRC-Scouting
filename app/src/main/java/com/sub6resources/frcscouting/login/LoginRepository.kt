@@ -4,42 +4,45 @@ import accounts.AccountsServiceGrpc
 import accounts.TokenOuterClass
 import accounts.UserOuterClass
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import android.util.Log
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
-
 import io.grpc.ManagedChannelBuilder
+import io.grpc.stub.StreamObserver
 
 /**
  * Created by whitaker on 1/8/18.
  */
 class LoginRepository(val loginApi: LoginApi, val userDao: UserDao) {
 
+    val mChannel by lazy {ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext(true).build()}
+
     fun signIn(login: Login): LiveData<BasicNetworkState<User>> = makeNetworkRequest(loginApi.signIn(login), userDao.signIn(login.username)) {
         insert { userDao.create(it.apply { username = login.username })}
     }
 
-    fun doStuffWithUser(): TokenOuterClass.Token {
-        val mChannel = ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext(true).build()
-        val blockingStub = AccountsServiceGrpc.newBlockingStub(mChannel)
+    fun signInGrpc(login: Login): LiveData<BasicNetworkState<User>> {
         val asyncStub = AccountsServiceGrpc.newStub(mChannel)
+        val mediator = MediatorLiveData<BasicNetworkState<User>>()
 
-        try {
-            return blockingStub.authenticate(user)
-        } catch(e: io.grpc.StatusRuntimeException) {
-            Log.e("GRPC Error", "${e.status.code.value()} : " + e.trailers.toString(), e)
-        } finally {
-            return TokenOuterClass.Token.newBuilder().build()
-        }
-    }
-    val user by lazy {
-        UserOuterClass.User.newBuilder().apply {
-            id = "7be58aaf-c844-4ee4-a449-8c917e8433e6" //Was 7
-            username = "TestUser" //Was just Test
-            password = "T3st"
-            firstName = "Test"
-            lastName = "User"
-            emailAddress = "testuser@example.com"
-        }.build()
+        mediator.value = BasicNetworkState.Loading()
+
+        check(asyncStub::authenticate)
+        asyncStub.authenticate(UserOuterClass.User.newBuilder().apply {
+            username = login.username
+            password = login.password
+        }.build(), object: StreamObserver<TokenOuterClass.Token> {
+            override fun onNext(value: TokenOuterClass.Token?) {
+                userDao.create(User().apply {username = login.username; token=value!!.generatedToken})
+                mediator.addSource(userDao.signIn(login.username)) { mediator.postValue(BasicNetworkState.Success(it!!)) }
+            }
+            override fun onError(t: Throwable?) {
+                Log.e("GRPC", "Error", t)
+                mediator.postValue(BasicNetworkState.Error(t?.message!!))
+            }
+            override fun onCompleted() {}
+        })
+        return mediator
     }
 }

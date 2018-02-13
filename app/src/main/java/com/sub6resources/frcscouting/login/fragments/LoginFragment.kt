@@ -56,7 +56,7 @@ class LoginFragment: BaseFragment() {
             }
 
 
-            /*if(viewModel.signIn(username, password)) {
+            if(viewModel.signIn(username, password)) {
                 viewModel.user.observe(this, Observer { loginResponse: BasicNetworkState<User>? ->
                     when(loginResponse) {
                         is BasicNetworkState.Success<User> -> {
@@ -67,12 +67,7 @@ class LoginFragment: BaseFragment() {
                             startActivity(Intent(baseActivity, MainActivity::class.java))
                         }
                         is BasicNetworkState.Error -> {
-                            //Display error message
-                            when {
-                                loginResponse.message == "HTTP 400 Bad Request" -> edittext_password.error = "Username or password is incorrect."
-                                loginResponse.message.contains("Unable to resolve host") -> edittext_password.error = "Connection is unavailable. Please use an existing user."
-                                else -> edittext_password.error = loginResponse.message
-                            }
+                            edittext_password.error = loginResponse.message
                             loadingDialog.dismiss()
                         }
                         is BasicNetworkState.Loading -> {
@@ -82,10 +77,7 @@ class LoginFragment: BaseFragment() {
                 })
             } else {
                 edittext_password.error = "Username and password are required"
-            }*/
-            Log.d("GRPC", "Presuccess!")
-            Log.d("GRPC", viewModel.testGrpc().generatedToken.toString())
-            Log.d("GRPC", "Success!")
+            }
 
         }
     }

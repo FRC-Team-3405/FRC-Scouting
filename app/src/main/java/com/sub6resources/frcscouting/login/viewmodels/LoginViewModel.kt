@@ -18,16 +18,12 @@ class LoginViewModel: BaseViewModel() {
     val userDao by inject<UserDao>()
     val offlineUsers = Transformations.map(userDao.getUsers()) {it}
     val login = MutableLiveData<Login>()
-    val user = Transformations.switchMap(login) {loginRepository.signIn(it)}
+    val user = Transformations.switchMap(login) {loginRepository.signInGrpc(it)}
 
     fun signIn(username: String, password: String): Boolean {
         if(username.isBlank() || password.isBlank())
             return false
         login.value = Login(username, password)
         return true
-    }
-
-    fun testGrpc(): TokenOuterClass.Token {
-        return loginRepository.doStuffWithUser()
     }
 }

@@ -1,10 +1,13 @@
 package com.sub6resources.frcscouting.login
 
+import accounts.TokenOuterClass
+import accounts.UserOuterClass
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.util.Log
+import io.grpc.stub.StreamObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -63,4 +66,8 @@ inline fun <T> makeNetworkRequest(call: Single<T>, query: LiveData<T>? = null, h
     })
 
     return mediator
+}
+
+fun check(call: (value: UserOuterClass.User, observer: StreamObserver<TokenOuterClass.Token>) -> Unit) {
+
 }
