@@ -7,10 +7,15 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.util.Log
+import com.google.protobuf.AbstractMessage
+import com.google.protobuf.GeneratedMessageV3
+import com.google.protobuf.MessageOrBuilder
+import io.grpc.ManagedChannel
 import io.grpc.stub.StreamObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import stats.FormOuterClass
 
 sealed class BasicNetworkState<T> {
     class Loading<T> : BasicNetworkState<T>()
@@ -68,6 +73,75 @@ inline fun <T> makeNetworkRequest(call: Single<T>, query: LiveData<T>? = null, h
     return mediator
 }
 
+fun <A,B,C> curry(function: (A,B) -> C): (A) -> (B) -> C {
+    return fun (a: A): (B) -> C {
+        return fun (b: B): C {
+            return function(a, b)
+        }
+    }
+}
+
+class Observer<T> {
+    private lateinit var onNext: (value: T) -> Unit
+    private lateinit var onError: (t: Throwable?) -> Unit
+    private lateinit var onCompleted: () -> Unit
+
+    fun next(_onNext: (value: T) -> Unit) {
+        onNext = _onNext
+    }
+
+    fun error(_onError: (t: Throwable?) -> Unit) {
+        onError = _onError
+    }
+
+    fun completed(_onCompleted: () -> Unit) {
+        onCompleted = _onCompleted
+    }
+
+    fun build(): StreamObserver<T> {
+        return object: StreamObserver<T> {
+            override fun onNext(value: T) { onNext(value) }
+            override fun onError(t: Throwable?) { onError(t) }
+            override fun onCompleted() { onCompleted() }
+        }
+    }
+}
+
+fun <T> streamObserver(builder: Observer<T>.() -> Unit): StreamObserver<T> {
+    return Observer<T>()
+            .apply(builder)
+            .build()
+}
+
+
+fun <T: GeneratedMessageV3, U: GeneratedMessageV3> makeGrpcCall(channel: ManagedChannel, call: (observer: StreamObserver<U>) -> Unit): LiveData<BasicNetworkState<U>> {
+    val mediatorLiveData = MediatorLiveData<BasicNetworkState<U>>()
+    call(streamObserver {
+        next {
+            // call insert if it exists
+            // Also make it so that you can pass extras in (just like the normal dsl)
+            // and return query (just like the normal dsl)
+        }
+        error {
+            // TODO Fix this
+            mediatorLiveData.value = BasicNetworkState.Error(it?.localizedMessage ?: "")
+        }
+        completed {
+            // add a new thing
+        }
+    })
+    return mediatorLiveData
+}
+
 fun check(call: (value: UserOuterClass.User, observer: StreamObserver<TokenOuterClass.Token>) -> Unit) {
 
 }
+
+interface builderer {
+    fun newBuilder()
+}
+
+inline fun <reified T: GeneratedMessageV3> build(x: T) {
+    x.newBuilderForType() as T
+}
+
