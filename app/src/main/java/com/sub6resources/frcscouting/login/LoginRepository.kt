@@ -4,15 +4,11 @@ import accounts.AccountsServiceGrpc
 import accounts.TokenOuterClass
 import accounts.UserOuterClass
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.util.Log
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.model.UserDao
 import io.grpc.ManagedChannel
-import io.grpc.ManagedChannelBuilder
-import io.grpc.stub.StreamObserver
 
-/**
+        /**
  * Created by whitaker on 1/8/18.
  */
 
@@ -22,8 +18,9 @@ typealias TokenMessage = TokenOuterClass.Token
 
 class LoginRepository(val channel: ManagedChannel, val userDao: UserDao) {
 
+    val asyncStub by lazy { AccountsServiceGrpc.newStub(channel) }
+
     fun signInGrpc(login: Login): LiveData<BasicNetworkState<TokenMessage>> {
-        val asyncStub = AccountsServiceGrpc.newStub(channel)
 
         val message = UserMessage.newBuilder().apply {
             username = login.username
@@ -38,5 +35,15 @@ class LoginRepository(val channel: ManagedChannel, val userDao: UserDao) {
                 userDao.create(User(message.username, it.generatedToken))
             }
         }
+    }
+
+    fun signUpGrpc(userMessage: UserMessage): LiveData<BasicNetworkState<UserMessage>> {
+
+        return makeGrpcCall<UserMessage, UserMessage>(channel, curry(asyncStub::createUser)(userMessage)) {
+            onError {
+                BasicNetworkState.Error(it.localizedMessage ?: "Unknown error")
+            }
+        }
+
     }
 }

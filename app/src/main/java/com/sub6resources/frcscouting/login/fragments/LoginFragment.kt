@@ -81,5 +81,9 @@ class LoginFragment: BaseFragment() {
             }
 
         }
+
+        text_signup.onClick {
+            addFragment(SignUpFragment())
+        }
     }
 }
