@@ -33,7 +33,14 @@ class LoginRepository(val channel: ManagedChannel, val userDao: UserDao) {
             password = login.password
         }.build()
         // TADA
-        makeGrpcCall<UserMessage, TokenMessage>(channel, curry(asyncStub::authenticate)(message))
+        makeGrpcCall<UserMessage, TokenMessage>(channel, curry(asyncStub::authenticate)(message), userDao.signIn(login.username)) {
+            onError {
+                mediator.postValue(BasicNetworkState.Error(it.localizedMessage ?: "Unknown error"))
+            }
+            insert {
+                userDao.create(User(it.userId, it.generatedToken))
+            }
+        }
         return mediator
     }
 }

@@ -114,17 +114,20 @@ fun <T> streamObserver(builder: Observer<T>.() -> Unit): StreamObserver<T> {
 }
 
 
-fun <T: GeneratedMessageV3, U: GeneratedMessageV3> makeGrpcCall(channel: ManagedChannel, call: (observer: StreamObserver<U>) -> Unit): LiveData<BasicNetworkState<U>> {
+fun <T: GeneratedMessageV3, U: GeneratedMessageV3> makeGrpcCall(channel: ManagedChannel, call: (observer: StreamObserver<U>) -> Unit, query: LiveData<U>? = null, handler: ExtrasHandler<U>.() -> Unit = {}): LiveData<BasicNetworkState<U>> {
     val mediatorLiveData = MediatorLiveData<BasicNetworkState<U>>()
+    val extrasHandler = ExtrasHandler<U>().apply { handler() }
     call(streamObserver {
         next {
-            // call insert if it exists
-            // Also make it so that you can pass extras in (just like the normal dsl)
-            // and return query (just like the normal dsl)
+            if(query == null) {
+                mediatorLiveData.postValue(BasicNetworkState.Success(it))
+            } else {
+                extrasHandler.insertFunction?.invoke(it)
+                mediatorLiveData.addSource(query) { mediatorLiveData.postValue(BasicNetworkState.Success(it!!)) }
+            }
         }
         error {
-            // TODO Fix this
-            mediatorLiveData.value = BasicNetworkState.Error(it?.localizedMessage ?: "")
+            mediatorLiveData.postValue(extrasHandler.errorFunction.invoke(it!!))
         }
         completed {
             // add a new thing
