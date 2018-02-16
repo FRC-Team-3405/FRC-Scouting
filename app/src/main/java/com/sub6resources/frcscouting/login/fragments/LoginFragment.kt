@@ -9,6 +9,7 @@ import android.view.View
 import com.sub6resources.frcscouting.MainActivity
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.login.BasicNetworkState
+import com.sub6resources.frcscouting.login.TokenMessage
 import com.sub6resources.frcscouting.login.model.User
 import com.sub6resources.frcscouting.login.recyclerviews.UserRecyclerAdapter
 import com.sub6resources.frcscouting.login.viewmodels.LoginViewModel
@@ -57,12 +58,12 @@ class LoginFragment: BaseFragment() {
 
 
             if(viewModel.signIn(username, password)) {
-                viewModel.user.observe(this, Observer { loginResponse: BasicNetworkState<User>? ->
+                viewModel.user.observe(this, Observer<BasicNetworkState<TokenMessage>> { loginResponse: BasicNetworkState<TokenMessage>? ->
                     when(loginResponse) {
-                        is BasicNetworkState.Success<User> -> {
+                        is BasicNetworkState.Success<TokenMessage> -> {
                             loadingDialog.dismiss()
                             baseActivity.sharedPreferences.edit {
-                                putString("currentUser", loginResponse.data.username)
+                                putString("currentUser", username)
                             }.apply()
                             startActivity(Intent(baseActivity, MainActivity::class.java))
                         }

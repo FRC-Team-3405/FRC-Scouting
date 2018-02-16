@@ -22,25 +22,21 @@ typealias TokenMessage = TokenOuterClass.Token
 
 class LoginRepository(val channel: ManagedChannel, val userDao: UserDao) {
 
-    fun signInGrpc(login: Login): LiveData<BasicNetworkState<User>> {
+    fun signInGrpc(login: Login): LiveData<BasicNetworkState<TokenMessage>> {
         val asyncStub = AccountsServiceGrpc.newStub(channel)
-        val mediator = MediatorLiveData<BasicNetworkState<User>>()
-
-        mediator.value = BasicNetworkState.Loading()
 
         val message = UserMessage.newBuilder().apply {
             username = login.username
             password = login.password
         }.build()
         // TADA
-        makeGrpcCall<UserMessage, TokenMessage>(channel, curry(asyncStub::authenticate)(message), userDao.signIn(login.username)) {
+        return makeGrpcCall<UserMessage, TokenMessage>(channel, curry(asyncStub::authenticate)(message), userDao.signIn(login.username)) {
             onError {
-                mediator.postValue(BasicNetworkState.Error(it.localizedMessage ?: "Unknown error"))
+                BasicNetworkState.Error(it.localizedMessage ?: "Unknown error")
             }
             insert {
-                userDao.create(User(it.userId, it.generatedToken))
+                userDao.create(User(message.username, it.generatedToken))
             }
         }
-        return mediator
     }
 }

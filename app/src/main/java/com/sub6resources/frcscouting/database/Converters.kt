@@ -2,6 +2,7 @@ package com.sub6resources.frcscouting.database
 
 import android.arch.persistence.room.TypeConverter
 import com.sub6resources.frcscouting.form.model.FieldType
+import com.sub6resources.frcscouting.login.TokenMessage
 import java.util.*
 
 /*
@@ -19,4 +20,10 @@ class Converters {
 
     @TypeConverter
     fun fromUUID(uuid: UUID): String = uuid.toString()
+
+    @TypeConverter
+    fun toTokenMessage(value: String): TokenMessage = TokenMessage.newBuilder().apply {generatedToken = value}.build()
+
+    @TypeConverter
+    fun fromTokenMessage(tokenMessage: TokenMessage): String =  tokenMessage.generatedToken
 }

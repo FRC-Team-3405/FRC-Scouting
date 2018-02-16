@@ -100,9 +100,9 @@ class Observer<T> {
 
     fun build(): StreamObserver<T> {
         return object: StreamObserver<T> {
-            override fun onNext(value: T) { onNext(value) }
-            override fun onError(t: Throwable?) { onError(t) }
-            override fun onCompleted() { onCompleted() }
+            override fun onNext(value: T) { this@Observer.onNext(value) }
+            override fun onError(t: Throwable?) { this@Observer.onError(t) }
+            override fun onCompleted() { this@Observer.onCompleted() }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.sub6resources.frcscouting.login.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import com.sub6resources.frcscouting.login.TokenMessage
 import java.util.*
 
 /**
@@ -31,8 +32,8 @@ interface UserDao {
     @Delete
     fun delete(user: User)
 
-    @Query("SELECT * FROM User WHERE username = :arg0")
-    fun signIn(username: String): LiveData<User>
+    @Query("SELECT token FROM User WHERE username = :arg0")
+    fun signIn(username: String): LiveData<TokenMessage>
 
     @Query("SELECT * FROM User")
     fun getUsers(): LiveData<List<User>>
