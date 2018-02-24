@@ -42,4 +42,7 @@ interface FormResponseDao {
 
     @Query("SELECT * FROM FormResponse WHERE formId = :arg0")
     fun getFormResponses(formId: UUID): LiveData<List<FormResponse>>
+
+    @Query("SELECT * FROM FormResponse")
+    fun getFormResponsesSync(): List<FormResponse>
 }

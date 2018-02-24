@@ -67,4 +67,7 @@ interface FieldResponseDao {
 
     @Query("SELECT * FROM FieldResponse WHERE formResponseId = :arg0")
     fun getFieldResponses(formResponseId: UUID): LiveData<List<FieldResponse>>
+
+    @Query("SELECT * FROM FieldResponse")
+    fun getFieldResponsesSync(): List<FieldResponse>
 }

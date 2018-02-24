@@ -5,6 +5,7 @@
         <item>True/False</item>
         <item>Short Answer</item>
         <item>Image</item>
+        <item>Slider</item>
     </array>
     <plurals name="images_selected">
         <item quantity="other">%1$d images selected</item>

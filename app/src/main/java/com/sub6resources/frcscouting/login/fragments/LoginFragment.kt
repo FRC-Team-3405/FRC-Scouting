@@ -46,7 +46,7 @@ class LoginFragment: BaseFragment() {
         }
 
         button_signin.onClick {
-
+//            startActivity(Intent(baseActivity, MainActivity::class.java))
             val username = edittext_username.text.toString()
             val password = edittext_password.text.toString()
 
@@ -80,10 +80,6 @@ class LoginFragment: BaseFragment() {
                 edittext_password.error = "Username and password are required"
             }
 
-        }
-
-        text_signup.onClick {
-            addFragment(SignUpFragment())
         }
     }
 }

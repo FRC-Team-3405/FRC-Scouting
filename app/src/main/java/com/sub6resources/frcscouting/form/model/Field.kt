@@ -13,7 +13,8 @@ enum class FieldType {
     TRUEFALSE,
     BLANK,
     MULTICHOICE,
-    IMAGE
+    IMAGE,
+    SLIDER
 }
 
 
@@ -54,6 +55,10 @@ interface FieldDao {
             """
     )
     fun getFieldsForForm(formId: UUID): LiveData<List<Field>>
+
+
+    @Query("SELECT * FROM Field")
+    fun getFieldsSync(): List<Field>
 
     @Query("SELECT * FROM Field WHERE id = :arg0")
     fun get(fieldId: UUID): LiveData<Field>

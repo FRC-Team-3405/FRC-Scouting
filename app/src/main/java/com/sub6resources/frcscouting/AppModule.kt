@@ -1,5 +1,6 @@
 package com.sub6resources.frcscouting
 
+import com.sub6resources.frcscouting.form.SyncRepository
 import com.sub6resources.frcscouting.login.LoginRepository
 import io.grpc.ManagedChannelBuilder
 import org.koin.dsl.module.Module
@@ -12,9 +13,10 @@ import org.koin.dsl.module.applicationContext
 val appModule: Module = applicationContext {
     provide {
         ManagedChannelBuilder
-                .forAddress("10.0.2.2", 8080)
+                .forAddress("10.0.2.2", 1337)
                 .usePlaintext(true)
                 .build()
     }
     provide { LoginRepository(get(), get()) }
+    provide { SyncRepository(get()) }
 }

@@ -6,23 +6,28 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.sub6resources.frcscouting.R
 import com.sub6resources.frcscouting.form.FormActivity
 import com.sub6resources.frcscouting.form.FormCreateActivity
 import com.sub6resources.frcscouting.form.viewmodels.FieldListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormListViewModel
 import com.sub6resources.frcscouting.form.viewmodels.FormViewModel
+import com.sub6resources.frcscouting.form.viewmodels.SyncViewModel
 import com.sub6resources.frcscouting.form.views.FormListPagerAdapter
 import com.sub6resources.frcscouting.form.views.FormListView
 import com.sub6resources.frcscouting.formresponse.ResponseActivity
+import com.sub6resources.frcscouting.login.BasicNetworkState
 import com.sub6resources.frcscouting.login.LoginActivity
 import com.sub6resources.frcscouting.login.fragments.LoginFragment
 import com.sub6resources.utilities.BaseFragment
 import com.sub6resources.utilities.bind
 import com.sub6resources.utilities.onClick
 import kotlinx.android.synthetic.main.fragment_formlist.*
+import kotlinx.coroutines.experimental.async
 
 /**
  * Created by whitaker on 12/26/17.
@@ -35,6 +40,7 @@ class FormListFragment : BaseFragment() {
     val viewModel by getViewModel(FormListViewModel::class.java)
     val formViewModel by getSharedViewModel(FormViewModel::class.java)
     val fieldListViewModel by getSharedViewModel(FieldListViewModel::class.java)
+    val syncViewModel by getViewModel(SyncViewModel::class.java)
 
     val viewPager by bind<ViewPager>(R.id.formlist_view_pager)
     val tabs by bind<TabLayout>(R.id.formlist_tab_layout)
@@ -110,9 +116,25 @@ class FormListFragment : BaseFragment() {
         swipe_container.setOnRefreshListener {
             //This is called when user swipes down on Form list
             swipe_container.isRefreshing = true
-            //Sync Data
-            viewModel.syncData()
-            swipe_container.isRefreshing = false
+            async {
+                //Sync Data
+                syncViewModel.pushData().observe(this@FormListFragment, Observer {
+                    when (it) {
+                        is BasicNetworkState.Success -> {
+                            swipe_container.isRefreshing = false
+                            Toast.makeText(baseActivity, "Success!!", Toast.LENGTH_LONG).show()
+                        }
+                        is BasicNetworkState.Error -> {
+                            swipe_container.isRefreshing = false
+                            Toast.makeText(baseActivity, "Error Syncing: " + it.message, Toast.LENGTH_LONG).show()
+//                            Log.e("GRPC Sync", "Error", it)
+                        }
+                        is BasicNetworkState.Loading -> {
+
+                        }
+                    }
+                })
+            }
         }
     }
 

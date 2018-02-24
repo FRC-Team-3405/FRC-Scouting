@@ -99,6 +99,12 @@ class ChoiceCreateViewModel : BaseViewModel() {
         }
     }
 
+    fun setFieldSlider() {
+        field.value?.apply {
+            type = FieldType.SLIDER
+        }
+    }
+
     fun saveField(_fieldText: String) {
         field.value?.let {
             if(_fieldText != "") {

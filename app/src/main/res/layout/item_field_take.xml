@@ -21,6 +21,14 @@
             android:layout_weight="1"
             tools:text="Question Text Here" />
 
+        <RadioGroup
+            android:id="@+id/field_take_choices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+        </RadioGroup>
+
         <EditText
             android:id="@+id/field_take_answer"
             android:layout_width="match_parent"
@@ -29,14 +37,6 @@
             android:ems="10"
             android:hint="Answer"
             android:inputType="textMultiLine" />
-
-        <RadioGroup
-            android:id="@+id/field_take_choices"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-        </RadioGroup>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/field_take_image_container"
@@ -68,11 +68,45 @@
                 android:id="@+id/field_take_images"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/field_take_image_add_button"
-                android:orientation="horizontal">
+                app:layout_constraintTop_toBottomOf="@id/field_take_image_add_button">
 
             </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/field_take_slider_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <SeekBar
+                android:id="@+id/field_take_slider_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:max="10"
+                android:progress="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/field_take_slider_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/field_take_slider_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="10" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

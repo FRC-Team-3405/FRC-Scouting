@@ -27,23 +27,13 @@ class LoginRepository(val channel: ManagedChannel, val userDao: UserDao) {
             password = login.password
         }.build()
         // TADA
-        return makeGrpcCall<UserMessage, TokenMessage>(channel, curry(asyncStub::authenticate)(message), userDao.signIn(login.username)) {
+        return makeGrpcCall<TokenMessage>(channel, curry(asyncStub::authenticate)(message), userDao.signIn(login.username)) {
             onError {
                 BasicNetworkState.Error(it.localizedMessage ?: "Unknown error")
             }
             insert {
-                userDao.create(User(message.username, it.generatedToken))
+                userDao.create(User(message.username, it.token))
             }
         }
-    }
-
-    fun signUpGrpc(userMessage: UserMessage): LiveData<BasicNetworkState<UserMessage>> {
-
-        return makeGrpcCall<UserMessage, UserMessage>(channel, curry(asyncStub::createUser)(userMessage)) {
-            onError {
-                BasicNetworkState.Error(it.localizedMessage ?: "Unknown error")
-            }
-        }
-
     }
 }

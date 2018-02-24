@@ -54,4 +54,7 @@ interface ChoiceDao {
     @Query("SELECT * FROM Choice WHERE fieldId = :arg0")
     fun getChoicesForField(fieldId: UUID): List<Choice>
 
+    @Query("SELECT * FROM Choice")
+    fun getChoicesSync(): List<Choice>
+
 }

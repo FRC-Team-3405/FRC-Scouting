@@ -22,8 +22,8 @@ class Converters {
     fun fromUUID(uuid: UUID): String = uuid.toString()
 
     @TypeConverter
-    fun toTokenMessage(value: String): TokenMessage = TokenMessage.newBuilder().apply {generatedToken = value}.build()
+    fun toTokenMessage(value: String): TokenMessage = TokenMessage.newBuilder().apply {token = value}.build()
 
     @TypeConverter
-    fun fromTokenMessage(tokenMessage: TokenMessage): String =  tokenMessage.generatedToken
+    fun fromTokenMessage(tokenMessage: TokenMessage): String =  tokenMessage.token
 }

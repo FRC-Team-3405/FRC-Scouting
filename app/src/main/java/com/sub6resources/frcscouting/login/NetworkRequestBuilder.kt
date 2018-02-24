@@ -114,7 +114,7 @@ fun <T> streamObserver(builder: Observer<T>.() -> Unit): StreamObserver<T> {
 }
 
 
-fun <T: GeneratedMessageV3, U: GeneratedMessageV3> makeGrpcCall(channel: ManagedChannel, call: (observer: StreamObserver<U>) -> Unit, query: LiveData<U>? = null, handler: ExtrasHandler<U>.() -> Unit = {}): LiveData<BasicNetworkState<U>> {
+fun <U: GeneratedMessageV3> makeGrpcCall(channel: ManagedChannel, call: (observer: StreamObserver<U>) -> Unit, query: LiveData<U>? = null, handler: ExtrasHandler<U>.() -> Unit = {}): LiveData<BasicNetworkState<U>> {
     val mediatorLiveData = MediatorLiveData<BasicNetworkState<U>>()
     val extrasHandler = ExtrasHandler<U>().apply { handler() }
     call(streamObserver {

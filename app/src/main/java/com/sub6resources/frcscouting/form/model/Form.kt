@@ -35,6 +35,9 @@ interface FormDao {
     @Query("SELECT * FROM Form WHERE isDraft = 0")
     fun getForms(): LiveData<List<Form>>
 
+    @Query("SELECT * FROM Form WHERE isDraft = 0")
+    fun getFormsSync(): List<Form>
+
     @Query("SELECT * FROM Form WHERE isDraft = 1")
     fun getFormDrafts(): LiveData<List<Form>>
 

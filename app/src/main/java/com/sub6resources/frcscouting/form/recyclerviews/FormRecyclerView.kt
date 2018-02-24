@@ -4,13 +4,13 @@ import android.graphics.Bitmap
 import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.widget.*
+import com.jakewharton.rxbinding2.widget.RxSeekBar
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.sub6resources.frcscouting.R
+import com.sub6resources.frcscouting.form.model.Choice
 import com.sub6resources.frcscouting.form.model.Field
 import com.sub6resources.frcscouting.form.model.FieldType
-import com.sub6resources.frcscouting.form.model.Choice
 import com.sub6resources.utilities.*
-import java.util.*
 
 /**
  * Created by whitaker on 12/28/17.
@@ -24,6 +24,9 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
     val answerImageSelectButton by bind<Button>(R.id.field_take_image_add_button)
     val answerImageText by bind<TextView>(R.id.field_take_image_text)
     val answerImages by bind<LinearLayout>(R.id.field_take_images)
+    val answerSliderContainer by bind<ConstraintLayout>(R.id.field_take_slider_container)
+    val answerSlider by bind<SeekBar>(R.id.field_take_slider_slider)
+    val answerSliderText by bind<TextView>(R.id.field_take_slider_text)
 
     override fun onBind(data: Field) {
         questionText.text = data.fieldText
@@ -31,6 +34,7 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
         answerEditText.hide()
         answerChoices.hide()
         answerImageContainer.hide()
+        answerSliderContainer.hide()
 
         when(data.type) {
             FieldType.BLANK -> {
@@ -80,6 +84,18 @@ class FormRecyclerViewHolder(v: View, val getChoicesForField: (field: Field) -> 
                         addImage(bitmap)
                         answerImageText.text = answerImageText.context.getPlural(R.plurals.images_selected, count)
                     }
+                }
+            }
+            FieldType.SLIDER -> {
+                answerSliderContainer.show()
+                answerSliderText.text = "1"
+                getAnswer(data)?.let {
+                    answerSlider.progress = it.choiceText.toInt()
+                    answerSliderText.text = it.choiceText
+                }
+                RxSeekBar.userChanges(answerSlider).subscribe {
+                    answerSliderText.text = it.toString()
+                    setAnswer(data, it.toString())
                 }
             }
         }

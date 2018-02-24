@@ -53,6 +53,7 @@ class FieldCreateFragment : BaseFragment() {
                             FieldType.TRUEFALSE -> 1
                             FieldType.BLANK -> 2
                             FieldType.IMAGE -> 3
+                            FieldType.SLIDER -> 4
                             else -> 0
                         }
                 )
@@ -106,6 +107,14 @@ class FieldCreateFragment : BaseFragment() {
                         }
                         add_choice_fab.hide()
                         viewModel.setFieldImage()
+                    }
+                    4 -> { //Slider
+                        choiceAdapter.apply {
+                            removeAll()
+                            add(Choice("Users will select a value between one and ten."))
+                        }
+                        add_choice_fab.hide()
+                        viewModel.setFieldSlider()
                     }
                 }
             }
