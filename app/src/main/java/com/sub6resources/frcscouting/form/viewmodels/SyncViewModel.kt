@@ -1,6 +1,7 @@
 package com.sub6resources.frcscouting.form.viewmodels
 
 import android.arch.lifecycle.LiveData
+import com.google.protobuf.Empty
 import com.sub6resources.frcscouting.form.SyncRepository
 import com.sub6resources.frcscouting.form.model.ChoiceDao
 import com.sub6resources.frcscouting.form.model.FieldDao
@@ -62,11 +63,14 @@ class SyncViewModel: BaseViewModel() {
                     formResponse = it.formResponseId.toString()
                     field = it.fieldId.toString()
                     choice = it.choice.toString()
-                    user = it.lastEditedBy
+                    user = it.lastEditedBy.toString()
                     synced = true
                 }.build())
             }
         }.build()
         return syncRepository.pushEverything(everything)
+    }
+    fun pullData(): LiveData<BasicNetworkState<FormSyncOuterClass.FormSync>> {
+        return syncRepository.pullEverything(Empty.newBuilder().build())
     }
 }

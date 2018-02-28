@@ -121,13 +121,28 @@ class FormListFragment : BaseFragment() {
                 syncViewModel.pushData().observe(this@FormListFragment, Observer {
                     when (it) {
                         is BasicNetworkState.Success -> {
-                            swipe_container.isRefreshing = false
-                            Toast.makeText(baseActivity, "Success!!", Toast.LENGTH_LONG).show()
+                            syncViewModel.pullData().observe(this@FormListFragment, Observer {
+                                when(it) {
+                                    is BasicNetworkState.Success -> {
+                                        swipe_container.isRefreshing = false
+                                        Toast.makeText(baseActivity, "Success!!", Toast.LENGTH_LONG).show()
+                                    }
+                                    is BasicNetworkState.Error -> {
+                                        swipe_container.isRefreshing = false
+                                        Toast.makeText(baseActivity, "Error Pulling: " + it.message, Toast.LENGTH_LONG).show()
+                                        Log.e("GRPC Sync", "Error Pulling: " + it.message)
+                                    }
+                                    is BasicNetworkState.Loading -> {
+
+                                    }
+                                }
+                            })
+
                         }
                         is BasicNetworkState.Error -> {
                             swipe_container.isRefreshing = false
-                            Toast.makeText(baseActivity, "Error Syncing: " + it.message, Toast.LENGTH_LONG).show()
-//                            Log.e("GRPC Sync", "Error", it)
+                            Toast.makeText(baseActivity, "Error Pushing: " + it.message, Toast.LENGTH_LONG).show()
+                            Log.e("GRPC Sync", "Error Pushing: " + it.message)
                         }
                         is BasicNetworkState.Loading -> {
 

@@ -11,11 +11,14 @@ import java.util.*
 @Entity()
 class User() {
     @PrimaryKey
+    lateinit var id: UUID
+
     lateinit var username: String
     lateinit var token: String
 
     @Ignore
     constructor(_username: String, _token: String) : this() {
+        this.id = UUID.randomUUID()
         this.username = _username
         this.token = _token
     }

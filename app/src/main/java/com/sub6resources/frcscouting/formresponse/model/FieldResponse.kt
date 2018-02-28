@@ -34,7 +34,7 @@ import java.util.*
                 ForeignKey(
                         entity = User::class,
                         childColumns = arrayOf("lastEditedBy"),
-                        parentColumns = arrayOf("username")
+                        parentColumns = arrayOf("id")
                 )
         ),
         indices = arrayOf(Index("formResponseId"), Index("fieldId"), Index("choice"))
@@ -46,7 +46,7 @@ class FieldResponse {
     lateinit var formResponseId: UUID
     lateinit var fieldId: UUID
 
-    var lastEditedBy: String? = null
+    lateinit var lastEditedBy: UUID
 
     lateinit var choice: UUID
 }

@@ -28,7 +28,7 @@ import com.sub6resources.frcscouting.scout.model.Scout
                 User::class,
                 Image::class
         ),
-        version = 16
+        version = 17
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

@@ -15,6 +15,7 @@ import com.sub6resources.frcscouting.login.recyclerviews.UserRecyclerAdapter
 import com.sub6resources.frcscouting.login.viewmodels.LoginViewModel
 import com.sub6resources.utilities.*
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.experimental.async
 
 /**
  * Created by whitaker on 12/30/17.
@@ -28,7 +29,7 @@ class LoginFragment: BaseFragment() {
     val userAdapter by lazy {
         UserRecyclerAdapter(users = listOf(), selectUser = {
             activity!!.sharedPreferences.edit {
-                putString("currentUser", it.username)
+                putString("currentUser", it.id.toString())
 
                 startActivity(Intent(baseActivity, MainActivity::class.java))
             }.apply()
@@ -57,28 +58,28 @@ class LoginFragment: BaseFragment() {
             }
 
 
-            if(viewModel.signIn(username, password)) {
-                viewModel.user.observe(this, Observer<BasicNetworkState<TokenMessage>> { loginResponse: BasicNetworkState<TokenMessage>? ->
-                    when(loginResponse) {
-                        is BasicNetworkState.Success<TokenMessage> -> {
-                            loadingDialog.dismiss()
-                            baseActivity.sharedPreferences.edit {
-                                putString("currentUser", username)
-                            }.apply()
-                            startActivity(Intent(baseActivity, MainActivity::class.java))
+                if (viewModel.signIn(username, password)) {
+                    viewModel.user.observe(this@LoginFragment, Observer<BasicNetworkState<TokenMessage>> { loginResponse: BasicNetworkState<TokenMessage>? ->
+                        when (loginResponse) {
+                            is BasicNetworkState.Success -> {
+                                loadingDialog.dismiss()
+                                baseActivity.sharedPreferences.edit {
+                                    putString("currentUser", loginResponse.data.id)
+                                }.apply()
+                                startActivity(Intent(baseActivity, MainActivity::class.java))
+                            }
+                            is BasicNetworkState.Error -> {
+                                edittext_password.error = loginResponse.message
+                                loadingDialog.dismiss()
+                            }
+                            is BasicNetworkState.Loading -> {
+                                loadingDialog.show()
+                            }
                         }
-                        is BasicNetworkState.Error -> {
-                            edittext_password.error = loginResponse.message
-                            loadingDialog.dismiss()
-                        }
-                        is BasicNetworkState.Loading -> {
-                            loadingDialog.show()
-                        }
-                    }
-                })
-            } else {
-                edittext_password.error = "Username and password are required"
-            }
+                    })
+                } else {
+                    edittext_password.error = "Username and password are required"
+                }
 
         }
     }

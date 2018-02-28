@@ -52,12 +52,12 @@ class FormViewModel : BaseViewModel() {
         return null
     }
 
-    fun setAnswer(field: Field, answer: String, username: String) {
+    fun setAnswer(field: Field, answer: String, userId: UUID) {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
             correspondingFieldResponse.apply {
                 choice = choiceDao.getChoicesForField(field.id).find { it.choiceText == answer }?.id ?: generateNewChoice(field, answer)
-                lastEditedBy = username
+                lastEditedBy = userId
             }
             fieldResponseDao.update(correspondingFieldResponse)
         } else {
@@ -67,14 +67,14 @@ class FormViewModel : BaseViewModel() {
                     fieldId = field.id
                     formResponseId = formRId
                     choice = choiceDao.getChoicesForField(field.id).find { it.choiceText == answer }?.id ?: generateNewChoice(field, answer)
-                    lastEditedBy = username
+                    lastEditedBy = userId
                 })
             }
         }
 
     }
 
-    fun appendToAnswer(field: Field, additionalAnswer: String, username: String): Int {
+    fun appendToAnswer(field: Field, additionalAnswer: String, userId: UUID): Int {
         val correspondingFieldResponse = getFieldResponseOfField(field)
         if(correspondingFieldResponse != null) {
             imageDao.create(Image(UUID.randomUUID(), additionalAnswer, correspondingFieldResponse.id))
@@ -86,7 +86,7 @@ class FormViewModel : BaseViewModel() {
                     fieldId = field.id
                     formResponseId = formRId
                     choice = generateNewChoice(field, "0")
-                    lastEditedBy = username
+                    lastEditedBy = userId
                 }
                 fieldResponseDao.create(newFieldResponse)
                 imageDao.create(Image(UUID.randomUUID(), additionalAnswer, newFieldResponse.id))
